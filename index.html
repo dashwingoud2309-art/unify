@@ -275,6 +275,63 @@
   .mock-card .mc-row .k{color:var(--text-faint);}
   .mock-card .mc-row .v{color:var(--text); font-weight:600; text-align:right;}
 
+  /* ---------- ORCHESTRATOR RESULT DETAIL PAGE ---------- */
+  .breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px; color:var(--text-faint); margin-bottom:16px;}
+  .breadcrumb b{color:var(--text); font-weight:600;}
+  .breadcrumb .sep{color:var(--line-strong);}
+  .back-link{
+    display:inline-flex; align-items:center; gap:6px; background:none; border:none; color:var(--text-dim);
+    font-size:13.5px; font-weight:600; cursor:pointer; padding:0; margin-bottom:18px;
+  }
+  .back-link:hover{color:var(--primary);}
+  .detail-banner{
+    border-radius:var(--radius-lg); padding:26px 28px; margin-bottom:22px; color:#fff; position:relative; overflow:hidden;
+  }
+  .detail-banner .db-kicker{font-family:var(--font-mono); font-size:11.5px; text-transform:uppercase; letter-spacing:.06em; opacity:.85; margin-bottom:8px;}
+  .detail-banner h2{font-family:var(--font-display); font-size:24px; margin:0 0 8px;}
+  .detail-banner .db-meta{font-size:13.5px; opacity:.92;}
+  .detail-banner .db-status{
+    display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.22); padding:6px 14px;
+    border-radius:100px; font-size:12.5px; font-weight:700; margin-top:14px;
+  }
+  .detail-grid{display:grid; grid-template-columns:1.4fr 1fr; gap:20px;}
+  @media (max-width:940px){ .detail-grid{grid-template-columns:1fr;} }
+  .detail-section{margin-bottom:22px;}
+  .detail-section:last-child{margin-bottom:0;}
+  .detail-section h4{font-family:var(--font-display); font-size:15px; margin:0 0 12px; display:flex; align-items:center; gap:8px;}
+  .agenda-item{display:flex; gap:14px; padding:12px 0; border-bottom:1px solid var(--line);}
+  .agenda-item:last-child{border-bottom:none;}
+  .agenda-item .time{flex:none; width:78px; font-family:var(--font-mono); font-size:12px; color:var(--text-faint); padding-top:1px;}
+  .agenda-item .body b{display:block; font-size:13.5px;}
+  .agenda-item .body span{font-size:12.5px; color:var(--text-dim);}
+  .info-list{display:flex; flex-direction:column; gap:10px;}
+  .info-list li{list-style:none; display:flex; gap:10px; font-size:13.5px; color:var(--text-dim); align-items:flex-start;}
+  .info-list li .bullet{flex:none; width:6px; height:6px; border-radius:50%; background:var(--primary); margin-top:6px;}
+  .timeline{display:flex; flex-direction:column;}
+  .tl-step{display:flex; gap:14px; position:relative; padding-bottom:22px;}
+  .tl-step:last-child{padding-bottom:0;}
+  .tl-step .tl-dot{
+    flex:none; width:26px; height:26px; border-radius:50%; display:grid; place-items:center; font-size:12px; font-weight:700;
+    background:var(--surface-2); color:var(--text-faint); border:2px solid var(--line); z-index:1;
+  }
+  .tl-step.done .tl-dot{background:var(--teal); color:#fff; border-color:var(--teal);}
+  .tl-step.active .tl-dot{background:var(--primary); color:#fff; border-color:var(--primary);}
+  .tl-step:not(:last-child)::before{
+    content:''; position:absolute; left:12px; top:26px; bottom:0; width:2px; background:var(--line);
+  }
+  .tl-step.done:not(:last-child)::before{background:var(--teal);}
+  .tl-step .tl-body{padding-top:2px;}
+  .tl-step .tl-body b{display:block; font-size:13.5px;}
+  .tl-step .tl-body span{font-size:12.5px; color:var(--text-faint);}
+  .cost-table td, .cost-table th{padding:11px 12px; font-size:13.5px;}
+  .cost-table tfoot td{font-weight:700; border-top:2px solid var(--line-strong); border-bottom:none;}
+  .related-strip{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:6px;}
+  @media (max-width:700px){ .related-strip{grid-template-columns:1fr;} }
+  .related-card{border:1px solid var(--line); border-radius:var(--radius-md); padding:14px; background:var(--surface-2);}
+  .related-card b{display:block; font-size:13px; margin-bottom:4px;}
+  .related-card span{font-size:11.5px; color:var(--text-faint);}
+  .detail-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;}
+
   footer{border-top:1px solid var(--line); padding:32px 0; margin-top:20px; color:var(--text-faint); font-size:13px; text-align:center;}
 </style>
 </head>
@@ -338,7 +395,7 @@ const AGENTS = [
   { id:"procurement", name:"Procurement Agent", icon:"🧾", color:"var(--amber)", bg:"var(--amber-dim)",
     desc:"Handles lab equipment, stationery and vendor purchase requests — quotations, budget approval and order tracking.",
     tags:["Purchase orders","Vendor quotes","Budget approval"],
-    keywords:["purchase","buy","order","equipment","vendor","quotation","quote","budget","supplies","inventory","stationery","procure"] },
+    keywords:["purchase","buy","order","equipment","vendor","quotation","quote","budget","supplies","inventory","stationery","procure","arduino","kit","kits","robotics"] },
   { id:"event", name:"Event Agent", icon:"🎉", color:"var(--rose)", bg:"var(--rose-dim)",
     desc:"Finds workshops, fests and hackathons, and handles registration and certificates end to end.",
     tags:["Acumen","Euphoria","Workshops"],
@@ -538,6 +595,7 @@ const STATE = {
   sem: "Sem 5",
   orchQuery: "",
   orchResult: null,
+  orchDetail: null,
   mapSelected: null,
   sidebarOpen: false,
   homeSearch: "",
@@ -566,6 +624,104 @@ const EVENT_TYPE_STYLE = {
   Seminar:{bg:"var(--amber-dim)", color:"var(--amber)"},
 };
 
+/* ---------------- EXTRA MOCK DATA FOR DETAIL PAGES ----------------
+   Deeper mock payloads used only on the full-page orchestrator result
+   views (STATE.tab === "orch-detail"). Keyed by event name / item so the
+   two example flows in the prompt — the AI workshop registration and the
+   Arduino kits order — have real, specific detail behind them, while
+   every other agent still gets a reasonable generic detail page. */
+const EVENT_DETAILS = {
+  "AI & ML Workshop": {
+    banner:["#6C5CE7","#8B7CF0"],
+    description:"A hands-on full-day workshop covering practical machine learning and deep learning workflows — from data prep to a deployed model — run by the AI & ML department with an industry guest session in the afternoon.",
+    instructor:"Dr. Kavitha Reddy, HOD · AI & ML Dept.",
+    coHost:"IEEE Student Chapter, Unify",
+    agenda:[
+      { time:"10:00 AM", title:"Check-in & kits distribution", desc:"Collect your workshop kit and seating card at the Auditorium lobby." },
+      { time:"10:30 AM", title:"Foundations of ML pipelines", desc:"Data prep, feature engineering and model selection — live coding." },
+      { time:"12:15 PM", title:"Hands-on lab: build a classifier", desc:"Work in pairs on a real dataset; TAs circulate for help." },
+      { time:"1:30 PM", title:"Lunch break", desc:"Refreshments served near the Auditorium lawns." },
+      { time:"2:15 PM", title:"Industry session: ML in production", desc:"Guest talk from a visiting engineer on deploying models at scale." },
+      { time:"3:45 PM", title:"Wrap-up & certificate QR", desc:"Feedback form, group photo, certificate QR handed out." },
+    ],
+    prerequisites:["Laptop with Python 3.10+ installed","Basic familiarity with Python syntax","VS Code or Jupyter set up beforehand"],
+    whatToBring:["Laptop + charger","College ID card","Notebook (optional, notes provided digitally)"],
+    certificate:"E-certificate issued within 48 hours of the workshop, conditional on attendance being marked at check-in and the wrap-up session.",
+    cancellation:"Free to cancel up to 24 hours before the workshop from the Event Agent — just say \"cancel my AI workshop registration\".",
+  },
+  "Acumen Tech Fest": {
+    banner:["#FF6188","#FF7A59"],
+    description:"Unify's flagship annual technical fest — a two-day mix of competitions, project expos and guest talks across every department.",
+    instructor:"Student Council · Acumen Organizing Committee",
+    coHost:"All department associations",
+    agenda:[
+      { time:"9:00 AM", title:"Inauguration", desc:"Opening ceremony at the CSE Block Grounds main stage." },
+      { time:"10:30 AM", title:"Project expo opens", desc:"Department stalls open across the grounds." },
+      { time:"1:00 PM", title:"Lunch & networking", desc:"Food stalls open near the grounds." },
+      { time:"3:00 PM", title:"Flagship competitions", desc:"Finals for coding, robotics and case-study rounds." },
+      { time:"6:00 PM", title:"Cultural evening", desc:"Music and dance performances to close the day." },
+    ],
+    prerequisites:["None — open to all students"],
+    whatToBring:["College ID card"],
+    certificate:"Participation certificates for competition entrants; issued at the closing ceremony.",
+    cancellation:"General entry doesn't need cancellation; competition teams can withdraw via the Event Agent.",
+  },
+  "Code Sprint Hackathon": {
+    banner:["#1FBFA8","#17a390"],
+    description:"A 24-hour team hackathon hosted in the CSE Block labs, with problem statements released at the opening ceremony and mentors on rotation through the night.",
+    instructor:"CSE Dept. · Coding Club",
+    coHost:"Local startup sponsors",
+    agenda:[
+      { time:"8:00 AM", title:"Opening & problem statements", desc:"Themes released, teams form up in the CSE labs." },
+      { time:"9:00 AM", title:"Hacking begins", desc:"Labs open through the night with mentor rotations." },
+      { time:"8:00 AM (Day 2)", title:"Submissions close", desc:"Push final code and slides to the portal." },
+      { time:"10:00 AM (Day 2)", title:"Judging & demos", desc:"Each team gets a 5-minute demo slot." },
+      { time:"1:00 PM (Day 2)", title:"Results & prizes", desc:"Winners announced, prizes distributed." },
+    ],
+    prerequisites:["Team of 2–4 registered in advance","Laptop per team member"],
+    whatToBring:["Laptop + charger","College ID card","A sleeping bag if you're staying overnight"],
+    certificate:"Participation certificates for all teams; winners get a separate merit certificate.",
+    cancellation:"Team lead can withdraw the whole team via the Event Agent up to 48 hours before start.",
+  },
+  "Career Guidance Seminar": {
+    banner:["#F5A623","#e5941a"],
+    description:"An open seminar on placement prep, resume reviews and interview strategy, run by the Training & Placement cell — no registration required, just walk in.",
+    instructor:"Training & Placement Cell",
+    coHost:"Alumni Relations Office",
+    agenda:[
+      { time:"2:00 PM", title:"Placement trends & expectations", desc:"What recruiters on campus are currently looking for." },
+      { time:"2:40 PM", title:"Resume clinic", desc:"Bring a printed resume for a quick review." },
+      { time:"3:20 PM", title:"Mock interview panel", desc:"Volunteers get a live mock interview with feedback." },
+      { time:"4:00 PM", title:"Open Q&A", desc:"Ask the panel anything about placements." },
+    ],
+    prerequisites:["None"],
+    whatToBring:["A printed resume, if you'd like it reviewed"],
+    certificate:"No certificate — this is an open informational seminar.",
+    cancellation:"Not applicable — no registration required.",
+  },
+};
+
+const ARDUINO_ORDER = {
+  itemName:"Arduino Uno R3 Starter Kit",
+  sku:"ARD-UNO-R3-SK",
+  department:"Robotics Lab · Mechanical & CSE (AI&ML) Dept.",
+  requestedBy:"Ashwin R · 20B91A0512",
+  costCenter:"CC-ROBOLAB-04",
+  unitPrice:1450,
+  currency:"₹",
+  qty:10,
+  shippingFlat:600,
+  handlingPct:0.02,
+  vendor:{
+    name:"Campus Store & Supplies",
+    contact:"campusstore@vasavi.ac.in · 040-2301-4477",
+    gst:"36AACCV1234F1Z9",
+    rating:"4.6★ (past 28 campus orders)",
+  },
+  kitContents:["1x Arduino Uno R3 board","1x USB cable","1x Breadboard (830 point)","65x Jumper wires (M-M)","1x Resistor pack (20 values)","5x LEDs, 1x buzzer, 1x servo motor"],
+  justification:"Requested to replace worn units in the Robotics Lab ahead of the upcoming project-based labs for 3rd-year Mechatronics and the Code Sprint Hackathon prep sessions.",
+};
+
 /* ---------------- SMALL HELPERS ---------------- */
 function escapeHtml(str){
   const d = document.createElement('div');
@@ -582,6 +738,9 @@ function statusFor(pct){
   if (pct >= 85) return {label:"Safe", bg:"var(--teal-dim)", color:"var(--teal)", bar:"var(--teal)"};
   if (pct >= 75) return {label:"OK", bg:"var(--primary-dim)", color:"var(--primary)", bar:"var(--primary)"};
   return {label:"At risk", bg:"var(--rose-dim)", color:"var(--rose)", bar:"var(--rose)"};
+}
+function money(n){
+  return "₹" + Math.round(n).toLocaleString("en-IN");
 }
 
 /* ---------------- PAGE HEAD ---------------- */
@@ -640,7 +799,7 @@ function renderHome(){
     <div class="home-row">
       <div class="ic" style="background:${st.bg};color:${st.color}">🎉</div>
       <div class="t"><b>${escapeHtml(ev.name)}</b><span>${escapeHtml(ev.date)} · ${escapeHtml(ev.time)} · ${escapeHtml(ev.venue)} · ${escapeHtml(ev.seats)}</span></div>
-      <span class="tag" style="background:${st.bg};color:${st.color}">${escapeHtml(ev.type)}</span>
+      <button class="chip" data-view-event="${escapeHtml(ev.name)}" style="flex:none">View details →</button>
     </div>`;
   }).join("");
 
@@ -696,6 +855,9 @@ function renderOrchestrator(){
           <b>${escapeHtml(r.agent.name)}:</b> ${escapeHtml(r.response)}
         </div>
         ${renderMockCard(r.agent.id, r.query)}
+        <button class="btn btn-primary" style="margin-top:14px" data-view-detail="${r.agent.id}" data-detail-query="${escapeHtml(r.query)}">
+          Open full ${escapeHtml(r.agent.name)} page →
+        </button>
       </div>`;
   } else {
     resultHtml = `<div class="route-result empty">Type a request above, or tap an example, to see it get routed.</div>`;
@@ -911,6 +1073,300 @@ const DataService = {
     </div>`;
 }
 
+/* ---------------- ORCHESTRATOR RESULT — FULL DETAIL PAGES ----------------
+   Each routed request now gets its own full page (not just the small
+   inline mock card). The page shown depends on which agent the
+   orchestrator picked; content is built from richer mock data above. */
+
+function findEventForQuery(query){
+  const s = (query || "").toLowerCase();
+  const byKeyword = UPCOMING_EVENTS.find(ev=>{
+    const words = ev.name.toLowerCase().split(/\s+/).filter(w=>w.length>2 && w!=="&");
+    return words.some(w=>s.includes(w)) || (s.includes("ai") && ev.name.includes("AI"));
+  });
+  if (byKeyword) return byKeyword;
+  const seed = seedFrom(query || "event");
+  return UPCOMING_EVENTS[seed % UPCOMING_EVENTS.length];
+}
+
+function breadcrumbHtml(agent, label){
+  return `
+    <div class="breadcrumb">
+      <span>Orchestrator Agent</span><span class="sep">›</span>
+      <span style="color:${agent.color}">${agent.icon} ${escapeHtml(agent.name)}</span><span class="sep">›</span>
+      <b>${escapeHtml(label)}</b>
+    </div>`;
+}
+
+function buildEventDetailPage(query){
+  const agent = AGENTS.find(a=>a.id==="event");
+  const ev = findEventForQuery(query);
+  const d = EVENT_DETAILS[ev.name];
+  const seed = seedFrom(query || ev.name);
+  const regId = "EVT-" + pad4(seed);
+
+  const agenda = d.agenda.map(a=>`
+    <div class="agenda-item">
+      <div class="time">${escapeHtml(a.time)}</div>
+      <div class="body"><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.desc)}</span></div>
+    </div>`).join("");
+
+  const prereqs = d.prerequisites.map(p=>`<li><span class="bullet"></span>${escapeHtml(p)}</li>`).join("");
+  const bring = d.whatToBring.map(p=>`<li><span class="bullet"></span>${escapeHtml(p)}</li>`).join("");
+
+  const related = UPCOMING_EVENTS.filter(e=>e.name!==ev.name).slice(0,3).map(e=>`
+    <div class="related-card">
+      <b>${escapeHtml(e.name)}</b>
+      <span>${escapeHtml(e.date)} · ${escapeHtml(e.venue)}</span>
+    </div>`).join("");
+
+  return `
+    ${backLinkHtml()}
+    ${breadcrumbHtml(agent, "Registration confirmed")}
+    <div class="detail-banner" style="background:linear-gradient(135deg, ${d.banner[0]}, ${d.banner[1]})">
+      <div class="db-kicker">Event registration · ${escapeHtml(regId)}</div>
+      <h2>${escapeHtml(ev.name)}</h2>
+      <div class="db-meta">${escapeHtml(ev.date)} · ${escapeHtml(ev.time)} · ${escapeHtml(ev.venue)}</div>
+      <div class="db-status">✓ Confirmed — you're on the list</div>
+    </div>
+    <div class="detail-grid">
+      <div>
+        <div class="card detail-section">
+          <h4>📋 About this event</h4>
+          <p style="color:var(--text-dim);font-size:13.5px;line-height:1.6;margin:0 0 10px">${escapeHtml(d.description)}</p>
+          <p style="color:var(--text-faint);font-size:12.5px;margin:0">Run by ${escapeHtml(d.instructor)} · Co-hosted with ${escapeHtml(d.coHost)}</p>
+        </div>
+        <div class="card detail-section">
+          <h4>🗓️ Agenda for the day</h4>
+          ${agenda}
+        </div>
+      </div>
+      <div>
+        <div class="card detail-section">
+          <h4>🎫 Your registration</h4>
+          ${renderMockCard("event", query)}
+        </div>
+        <div class="card detail-section">
+          <h4>✅ Prerequisites</h4>
+          <ul class="info-list">${prereqs}</ul>
+        </div>
+        <div class="card detail-section">
+          <h4>🎒 What to bring</h4>
+          <ul class="info-list">${bring}</ul>
+        </div>
+        <div class="card detail-section">
+          <h4>ℹ️ Good to know</h4>
+          <p style="color:var(--text-dim);font-size:13px;margin:0 0 10px">${escapeHtml(d.certificate)}</p>
+          <p style="color:var(--text-dim);font-size:13px;margin:0">${escapeHtml(d.cancellation)}</p>
+        </div>
+      </div>
+    </div>
+    <div class="card detail-section">
+      <h4>🔎 Other upcoming events</h4>
+      <div class="related-strip">${related}</div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" data-tab="orchestrator">Route another request →</button>
+      <button class="btn btn-ghost" data-tab="agents">View all agents</button>
+    </div>`;
+}
+
+function buildProcurementDetailPage(query){
+  const agent = AGENTS.find(a=>a.id==="procurement");
+  const o = ARDUINO_ORDER;
+  const seed = seedFrom(query || o.itemName);
+  const reqId = "PR-" + pad4(seed);
+  const subtotal = o.unitPrice * o.qty;
+  const handling = subtotal * o.handlingPct;
+  const total = subtotal + o.shippingFlat + handling;
+
+  const contents = o.kitContents.map(c=>`<li><span class="bullet"></span>${escapeHtml(c)}</li>`).join("");
+
+  const steps = [
+    { label:"Request submitted", meta:"Filed automatically by the orchestrator", state:"done" },
+    { label:"Lab in-charge review", meta:"Robotics Lab · usually same day", state:"active" },
+    { label:"HOD approval", meta:"Pending — awaiting sign-off", state:"" },
+    { label:"Purchase order to vendor", meta:"Sent once approved", state:"" },
+    { label:"Delivery & goods receipt", meta:"Est. 3–5 working days after PO", state:"" },
+  ];
+  const timelineHtml = steps.map(s=>`
+    <div class="tl-step ${s.state}">
+      <div class="tl-dot">${s.state==="done" ? "✓" : ""}</div>
+      <div class="tl-body"><b>${escapeHtml(s.label)}</b><span>${escapeHtml(s.meta)}</span></div>
+    </div>`).join("");
+
+  return `
+    ${backLinkHtml()}
+    ${breadcrumbHtml(agent, "Request submitted")}
+    <div class="detail-banner" style="background:linear-gradient(135deg, #F5A623, #E5941A)">
+      <div class="db-kicker">Procurement request · ${escapeHtml(reqId)}</div>
+      <h2>${o.qty}× ${escapeHtml(o.itemName)}</h2>
+      <div class="db-meta">${escapeHtml(o.department)} · Requested by ${escapeHtml(o.requestedBy)}</div>
+      <div class="db-status">⏳ Pending HOD approval</div>
+    </div>
+    <div class="detail-grid">
+      <div>
+        <div class="card detail-section">
+          <h4>💰 Cost breakdown</h4>
+          <table class="cost-table">
+            <thead><tr><th>Item</th><th>Qty</th><th>Unit price</th><th style="text-align:right">Total</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>${escapeHtml(o.itemName)} <span style="color:var(--text-faint);font-family:var(--font-mono);font-size:11.5px">(${escapeHtml(o.sku)})</span></td>
+                <td>${o.qty}</td>
+                <td>${money(o.unitPrice)}</td>
+                <td style="text-align:right">${money(subtotal)}</td>
+              </tr>
+              <tr><td colspan="3">Shipping (flat rate)</td><td style="text-align:right">${money(o.shippingFlat)}</td></tr>
+              <tr><td colspan="3">Handling (${(o.handlingPct*100).toFixed(0)}%)</td><td style="text-align:right">${money(handling)}</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td colspan="3">Total requested</td><td style="text-align:right">${money(total)}</td></tr>
+            </tfoot>
+          </table>
+          <p style="color:var(--text-faint);font-size:12px;margin:12px 0 0">Cost center: ${escapeHtml(o.costCenter)} · Prices are indicative mock figures for this demo.</p>
+        </div>
+        <div class="card detail-section">
+          <h4>📦 What's in each kit</h4>
+          <ul class="info-list">${contents}</ul>
+        </div>
+        <div class="card detail-section">
+          <h4>📝 Justification on file</h4>
+          <p style="color:var(--text-dim);font-size:13.5px;margin:0;line-height:1.6">${escapeHtml(o.justification)}</p>
+        </div>
+      </div>
+      <div>
+        <div class="card detail-section">
+          <h4>📄 Request summary</h4>
+          ${renderMockCard("procurement", query)}
+        </div>
+        <div class="card detail-section">
+          <h4>🚚 Approval & delivery timeline</h4>
+          <div class="timeline">${timelineHtml}</div>
+        </div>
+        <div class="card detail-section">
+          <h4>🏬 Vendor</h4>
+          <p style="margin:0 0 4px;font-weight:700;font-size:13.5px">${escapeHtml(o.vendor.name)}</p>
+          <p style="margin:0 0 4px;color:var(--text-dim);font-size:12.5px">${escapeHtml(o.vendor.contact)}</p>
+          <p style="margin:0 0 4px;color:var(--text-faint);font-size:12px">GSTIN: ${escapeHtml(o.vendor.gst)}</p>
+          <p style="margin:0;color:var(--text-faint);font-size:12px">${escapeHtml(o.vendor.rating)}</p>
+        </div>
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" data-tab="orchestrator">Route another request →</button>
+      <button class="btn btn-ghost" data-tab="agents">View all agents</button>
+    </div>`;
+}
+
+function buildGenericDetailPage(agentId, query){
+  const agent = AGENTS.find(a=>a.id===agentId);
+  const d = mockDetailsFor(agentId, query);
+
+  const extraByAgent = {
+    calendar: {
+      icon:"🗓️", statusLabel:"✓ Synced to your calendar",
+      note:"You can drag this entry to a new time in your calendar app, or ask the orchestrator to move it — e.g. \"push my project deadline reminder to 6pm\".",
+      extra:[
+        ["Reminder rule", "1 day before, then 2 hours before"],
+        ["Visible to", "Only you (personal calendar)"],
+        ["Recurs", "No — one-time entry"],
+      ],
+    },
+    notification: {
+      icon:"🔔", statusLabel:"✓ Reminder scheduled",
+      note:"Notifications go out via push and email by default. You can change the channel or lead time any time by asking the orchestrator.",
+      extra:[
+        ["Channel", "Push + Email"],
+        ["Snooze allowed", "Yes, up to 1 hour"],
+        ["Escalation", "Re-sent once if unread after 30 mins"],
+      ],
+    },
+    student_services: {
+      icon:"🎓", statusLabel:"✓ Record checked",
+      note:"If your attendance is below the 75% threshold, the Student Services Agent can auto-draft a condonation application for you to review and submit.",
+      extra:[
+        ["Data source", "Attendance Management System"],
+        ["Last synced", "Just now"],
+        ["Escalation path", "HOD → Dean of Academics"],
+      ],
+    },
+    knowledge: {
+      icon:"📚", statusLabel:"✓ Answer grounded in a source",
+      note:"Knowledge Agent answers are generated from indexed college circulars and the academic regulations document — always with a cited section.",
+      extra:[
+        ["Index", "Academic Regulations 2025–26"],
+        ["Retrieval method", "RAG over circulars + syllabus PDFs"],
+        ["Freshness", "Re-indexed nightly"],
+      ],
+    },
+    communication: {
+      icon:"✉️", statusLabel:"✓ Draft ready for review",
+      note:"Nothing is sent automatically — review the draft, edit if needed, then approve it from here to have the Communication Agent send it.",
+      extra:[
+        ["Draft tone", "Formal"],
+        ["Attachments", "None"],
+        ["Approval required", "Yes — your review before sending"],
+      ],
+    },
+    procurement: { icon:"🧾", statusLabel:"✓ Logged", note:"", extra:[] },
+    event: { icon:"🎉", statusLabel:"✓ Logged", note:"", extra:[] },
+  };
+  const x = extraByAgent[agentId] || { icon:"🤖", statusLabel:"✓ Handled", note:"", extra:[] };
+
+  const extraRows = x.extra.map(([k,v])=>`
+    <div class="mc-row"><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(v)}</span></div>`).join("");
+
+  return `
+    ${backLinkHtml()}
+    ${breadcrumbHtml(agent, d.title)}
+    <div class="detail-banner" style="background:linear-gradient(135deg, ${agent.color}, ${agent.color})">
+      <div class="db-kicker">${escapeHtml(agent.name)}</div>
+      <h2>${x.icon} ${escapeHtml(d.title)}</h2>
+      <div class="db-meta">"${escapeHtml(query)}"</div>
+      <div class="db-status">${escapeHtml(x.statusLabel)}</div>
+    </div>
+    <div class="detail-grid">
+      <div>
+        <div class="card detail-section">
+          <h4>${x.icon} What the ${escapeHtml(agent.name)} did</h4>
+          <p style="color:var(--text-dim);font-size:13.5px;margin:0 0 6px;line-height:1.6">${escapeHtml(responseFor(agentId))}</p>
+          ${x.note ? `<p style="color:var(--text-faint);font-size:12.5px;margin:10px 0 0;line-height:1.6">${escapeHtml(x.note)}</p>` : ""}
+        </div>
+        ${extraRows ? `<div class="card detail-section"><h4>⚙️ Extra details</h4>${extraRows}</div>` : ""}
+      </div>
+      <div>
+        <div class="card detail-section">
+          <h4>📄 Result summary</h4>
+          ${renderMockCard(agentId, query)}
+        </div>
+      </div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-primary" data-tab="orchestrator">Route another request →</button>
+      <button class="btn btn-ghost" data-tab="agents">View all agents</button>
+    </div>`;
+}
+
+function backLinkHtml(){
+  return `
+    <button class="back-link" data-tab="orchestrator">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Back to Orchestrator
+    </button>`;
+}
+
+function renderOrchestratorDetail(){
+  if (!STATE.orchDetail){
+    STATE.tab = "orchestrator";
+    return renderOrchestrator();
+  }
+  const { agentId, query } = STATE.orchDetail;
+  if (agentId === "event") return buildEventDetailPage(query);
+  if (agentId === "procurement") return buildProcurementDetailPage(query);
+  return buildGenericDetailPage(agentId, query);
+}
+
 /* ---------------- SHELL: NAV + FOOTER ---------------- */
 const TABS = [
   ["home","Home","🏠"],
@@ -924,6 +1380,7 @@ const TABS = [
 const PAGE_RENDERERS = {
   home: renderHome,
   orchestrator: renderOrchestrator,
+  "orch-detail": renderOrchestratorDetail,
   agents: renderAgents,
   results: renderResults,
   attendance: renderAttendance,
@@ -994,7 +1451,8 @@ function render(){
 function attachHandlers(){
   const root = document.getElementById('root');
 
-  // Sidebar nav links
+  // Sidebar / generic tab nav links (also used for "Back to Orchestrator"
+  // and the buttons at the bottom of every detail page)
   root.querySelectorAll('[data-tab]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       STATE.tab = btn.getAttribute('data-tab');
@@ -1028,6 +1486,29 @@ function attachHandlers(){
       STATE.tab = "orchestrator";
       STATE.orchQuery = "";
       STATE.orchResult = agent ? { query:`Help me with ${agent.name.replace(" Agent","").toLowerCase()}`, agent, confidence:88, response: responseFor(agent.id) } : null;
+      render();
+    });
+  });
+
+  // Homepage "View details →" on an upcoming event row — jumps straight
+  // to that event's full detail page via the Event Agent.
+  root.querySelectorAll('[data-view-event]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const evName = btn.getAttribute('data-view-event');
+      STATE.orchDetail = { agentId:"event", query: `Register me for ${evName}` };
+      STATE.tab = "orch-detail";
+      render();
+    });
+  });
+
+  // "Open full <Agent> page →" button under an orchestrator result —
+  // opens the dedicated full-page view for that agent + query.
+  root.querySelectorAll('[data-view-detail]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const agentId = btn.getAttribute('data-view-detail');
+      const q = btn.getAttribute('data-detail-query') || STATE.orchQuery;
+      STATE.orchDetail = { agentId, query:q };
+      STATE.tab = "orch-detail";
       render();
     });
   });
