@@ -645,7 +645,7 @@ function renderHome(){
   }).join("");
 
   return `
-    ${pageHead("Home", `Welcome back, ${student.name.split("Ashwin")[0]}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
+    ${pageHead("Home", `Welcome back Ashwin ${student.name.split(" ")[0]}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
     <div class="home-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="home-search-input" type="text" placeholder="Ask for anything — “remind me about my project deadline”" value="${escapeHtml(STATE.homeSearch)}" />
