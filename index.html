@@ -297,7 +297,7 @@
    "Connect a Database" tab and README.md for a worked example. */
 const DataService = {
   getStudent(){
-    return { name:" ashwin", roll:"20B91A0512", branch:"CSE (AI & ML)", year:"3rd Year", section:"B" };
+    return { name:"Ananya Rao", roll:"20B91A0512", branch:"CSE (AI & ML)", year:"3rd Year", section:"B" };
   },
   getResults(semester){
     const data = {
@@ -421,17 +421,28 @@ function mockDetailsFor(agentId, query){
     },
     event: {
       title: "Event registration",
-      rows: [
-        ["Registration ID", "EVT-" + pad4(seed)],
-        ["Venue", "Auditorium"],
-        ["Date & time", "Tomorrow · 10:00 AM"],
-        ["Status", "Confirmed"],
-        ["Certificate", "Issued after attendance is marked"],
-      ],
+      rows: (()=>{
+        const ev = UPCOMING_EVENTS[seed % UPCOMING_EVENTS.length];
+        return [
+          ["Registration ID", "EVT-" + pad4(seed)],
+          ["Event", ev.name],
+          ["Venue", ev.venue],
+          ["Date & time", ev.date + " · " + ev.time],
+          ["Status", "Confirmed"],
+          ["Certificate", "Issued after attendance is marked"],
+        ];
+      })(),
     },
     calendar: {
       title: "Calendar entry",
-      rows: [
+      rows: /deadline|submission|project/i.test(query) ? [
+        ["Event", "Major Project Phase-2 submission"],
+        ["Deadline", "18 Aug 2026 · 11:59 PM"],
+        ["Added to", "Personal calendar"],
+        ["Reminder", "1 day before + 2 hours before"],
+        ["Submit via", "LMS → Project Portal"],
+        ["Status", "Synced"],
+      ] : [
         ["Event", query.length > 40 ? query.slice(0,40)+"…" : query],
         ["Added to", "Personal calendar"],
         ["Reminder", "30 mins before"],
@@ -440,7 +451,15 @@ function mockDetailsFor(agentId, query){
     },
     notification: {
       title: "Reminder scheduled",
-      rows: [
+      rows: /deadline|submission|project/i.test(query) ? [
+        ["Reminder ID", "NTF-" + pad4(seed)],
+        ["Reminds you about", "Major Project Phase-2 submission"],
+        ["Deadline", "18 Aug 2026 · 11:59 PM"],
+        ["Days remaining", "10 days"],
+        ["Channel", "Push + Email"],
+        ["Lead time", "1 day before, then 2 hours before"],
+        ["Status", "Scheduled"],
+      ] : [
         ["Reminder ID", "NTF-" + pad4(seed)],
         ["Channel", "Push + Email"],
         ["Lead time", "1 hour before"],
@@ -533,6 +552,20 @@ const EXAMPLES = [
   "Draft a leave application to my HOD",
 ];
 
+/* ---------------- UPCOMING EVENTS (mock) ---------------- */
+const UPCOMING_EVENTS = [
+  { name:"AI & ML Workshop", date:"9 Aug 2026", time:"10:00 AM", venue:"Auditorium", type:"Workshop", seats:"32 seats left" },
+  { name:"Acumen Tech Fest", date:"22 Aug 2026", time:"9:00 AM", venue:"CSE Block Grounds", type:"Fest", seats:"Open to all" },
+  { name:"Code Sprint Hackathon", date:"29 Aug 2026", time:"8:00 AM", venue:"CSE Block Labs", type:"Hackathon", seats:"Team registration" },
+  { name:"Career Guidance Seminar", date:"3 Sep 2026", time:"2:00 PM", venue:"Seminar Hall", type:"Seminar", seats:"No registration needed" },
+];
+const EVENT_TYPE_STYLE = {
+  Workshop:{bg:"var(--primary-dim)", color:"var(--primary)"},
+  Fest:{bg:"var(--rose-dim)", color:"var(--rose)"},
+  Hackathon:{bg:"var(--teal-dim)", color:"var(--teal)"},
+  Seminar:{bg:"var(--amber-dim)", color:"var(--amber)"},
+};
+
 /* ---------------- SMALL HELPERS ---------------- */
 function escapeHtml(str){
   const d = document.createElement('div');
@@ -601,8 +634,18 @@ function renderHome(){
       <b>${escapeHtml(a.name)}</b>
     </button>`).join("");
 
+  const eventRows = UPCOMING_EVENTS.map(ev=>{
+    const st = EVENT_TYPE_STYLE[ev.type];
+    return `
+    <div class="home-row">
+      <div class="ic" style="background:${st.bg};color:${st.color}">🎉</div>
+      <div class="t"><b>${escapeHtml(ev.name)}</b><span>${escapeHtml(ev.date)} · ${escapeHtml(ev.time)} · ${escapeHtml(ev.venue)} · ${escapeHtml(ev.seats)}</span></div>
+      <span class="tag" style="background:${st.bg};color:${st.color}">${escapeHtml(ev.type)}</span>
+    </div>`;
+  }).join("");
+
   return `
-    ${pageHead("Home", `Welcome back, ${student.name.split("Ashwin")[0]}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
+    ${pageHead("Home", `Welcome back, ${student.name.split(" ")[0]}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
     <div class="home-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="home-search-input" type="text" placeholder="Ask for anything — “remind me about my project deadline”" value="${escapeHtml(STATE.homeSearch)}" />
@@ -620,6 +663,11 @@ function renderHome(){
         <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">Jump to an agent</h3>
         <div class="quick-agents">${quickAgents}</div>
       </div>
+    </div>
+
+    <div class="card" style="margin-top:20px">
+      <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">Upcoming events</h3>
+      <div class="home-list">${eventRows}</div>
     </div>`;
 }
 
@@ -907,7 +955,7 @@ function renderNav(){
           <div class="brand"><span class="mark">${LOGO_SVG}</span>Unify Connect</div>
         </div>
         <div class="nav-user">
-          <span> Ashwin  · CSE (AI&amp;ML)</span>
+          <span>Ananya Rao · CSE (AI&amp;ML)</span>
           <div class="avatar">AR</div>
         </div>
       </div>
