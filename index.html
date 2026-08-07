@@ -207,7 +207,7 @@
 
 <script>
 /* =========================================================================
-   VASAVI CONNECT — plain HTML/CSS/JS, zero external script dependencies.
+   Unify CONNECT — plain HTML/CSS/JS, zero external script dependencies.
    Everything below is one file: data, the orchestrator classifier, and a
    tiny render loop that swaps innerHTML per tab. No React, no build step,
    no CDN — so it can never fail to load because of a blocked/slow CDN.
@@ -316,7 +316,7 @@ function responseFor(agentId){
 }
 
 /* ---------------- CAMPUS MAP DATA ----------------
-   Stylised layout of Vasavi College of Engineering (Ibrahimbagh, Hyderabad).
+   Stylised layout of Unify College of Engineering (Ibrahimbagh, Hyderabad).
    Building names are real; positions are a simplified schematic for this
    demo — swap in real coordinates from a surveyed campus map if you have one. */
 const CAMPUS_PLACES = [
@@ -570,7 +570,7 @@ function renderMap(){
     <div class="map-legend">${legend}</div>
     <div class="map-shell">
       <div class="map-svg-wrap">
-        <svg viewBox="0 0 620 500" width="100%" role="img" aria-label="Vasavi College of Engineering campus map">
+        <svg viewBox="0 0 620 500" width="100%" role="img" aria-label="Unify College of Engineering campus map">
           <rect x="0" y="0" width="620" height="500" fill="transparent" />
           <path d="M60,120 H560 M300,60 V470 M120,210 L470,150 M130,340 L480,420" stroke="#D7E9DC" stroke-width="10" fill="none" stroke-linecap="round" />
           ${pins}
@@ -640,7 +640,7 @@ function renderNav(){
   return `
     <header class="nav">
       <div class="nav-inner">
-        <div class="brand"><span class="mark">V</span>Vasavi Connect</div>
+        <div class="brand"><span class="mark">V</span>Unify Connect</div>
         <nav class="tabs">${tabs}</nav>
         <div class="nav-user">
           <span>Ananya Rao · CSE (AI&amp;ML)</span>
