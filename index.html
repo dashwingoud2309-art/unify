@@ -68,23 +68,53 @@
     border-bottom:1px solid var(--line);
   }
   .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:var(--max); margin:0 auto; gap:20px;}
+  .nav-left{display:flex; align-items:center; gap:14px;}
+  .hamburger{
+    width:38px; height:38px; border-radius:10px; border:1px solid var(--line); background:var(--surface);
+    display:grid; place-items:center; cursor:pointer; flex:none; transition:background .15s, border-color .15s;
+  }
+  .hamburger:hover{border-color:var(--primary);}
+  .hamburger svg{width:18px; height:18px; display:block;}
   .brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:18px;}
   .brand .mark{
-    width:30px; height:30px; border-radius:9px;
+    width:32px; height:32px; border-radius:9px;
     background:linear-gradient(135deg, var(--primary), var(--teal));
-    display:grid; place-items:center; color:#fff; font-size:14px; font-weight:800;
+    display:grid; place-items:center; color:#fff; flex:none;
   }
-  .tabs{display:flex; gap:4px; background:var(--surface-2); padding:4px; border-radius:100px; border:1px solid var(--line); overflow-x:auto;}
-  .tab-btn{
-    border:none; background:transparent; padding:9px 16px; border-radius:100px;
-    font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer;
-    white-space:nowrap; transition:all .15s;
-  }
-  .tab-btn.active{background:var(--text); color:#fff;}
-  .tab-btn:hover:not(.active){background:var(--surface);}
+  .brand .mark svg{width:19px; height:19px;}
   .nav-user{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-dim); flex:none;}
   .avatar{width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--coral), var(--amber)); display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px;}
   @media (max-width:900px){ .nav-user span{display:none;} }
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar-overlay{
+    position:fixed; inset:0; background:rgba(33,31,53,0.28); z-index:59;
+    opacity:0; pointer-events:none; transition:opacity .2s;
+  }
+  .sidebar-overlay.open{opacity:1; pointer-events:auto;}
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; width:264px; z-index:60;
+    background:var(--surface); border-right:1px solid var(--line);
+    padding:20px 14px; display:flex; flex-direction:column; gap:4px;
+    transform:translateX(-100%); transition:transform .22s ease;
+    overflow-y:auto;
+  }
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-head{display:flex; align-items:center; justify-content:space-between; padding:4px 6px 18px;}
+  .sidebar-close{
+    width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--surface-2);
+    display:grid; place-items:center; cursor:pointer;
+  }
+  .sidebar-close svg{width:14px; height:14px;}
+  .side-link{
+    display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:12px;
+    border:none; background:transparent; color:var(--text-dim); font-size:14px; font-weight:600;
+    cursor:pointer; text-align:left; width:100%; transition:background .15s, color .15s;
+  }
+  .side-link:hover{background:var(--surface-2); color:var(--text);}
+  .side-link.active{background:var(--primary-dim); color:var(--primary);}
+  .side-link .side-ic{width:18px; text-align:center; flex:none;}
+  .sidebar-foot{margin-top:auto; padding:14px 8px 4px; font-size:11.5px; color:var(--text-faint); border-top:1px solid var(--line);}
 
   main{padding:44px 0 80px;}
   .page-head{margin-bottom:32px;}
@@ -199,6 +229,52 @@
   .db-step p{margin:0; font-size:13.5px; color:var(--text-dim);}
   .db-step b{color:var(--text);}
 
+  /* ---------- HOMEPAGE ---------- */
+  .home-search{
+    display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line-strong);
+    border-radius:100px; padding:6px 8px 6px 20px; box-shadow:0 12px 28px -20px rgba(33,31,53,0.25);
+  }
+  .home-search svg{width:17px; height:17px; color:var(--text-faint); flex:none;}
+  .home-search input{
+    flex:1; border:none; outline:none; background:transparent; font-family:var(--font-body);
+    font-size:15px; color:var(--text); padding:10px 0;
+  }
+  .home-search input::placeholder{color:var(--text-faint);}
+  .home-search button{flex:none;}
+  .home-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:26px 0;}
+  @media (max-width:820px){ .home-stats{grid-template-columns:repeat(2,1fr);} }
+  .home-stat{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:18px 20px;}
+  .home-stat .hs-ic{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; margin-bottom:12px; font-size:16px;}
+  .home-stat b{display:block; font-family:var(--font-display); font-size:24px;}
+  .home-stat span{font-size:12px; color:var(--text-faint);}
+  .home-grid{display:grid; grid-template-columns:1.3fr 1fr; gap:20px;}
+  @media (max-width:940px){ .home-grid{grid-template-columns:1fr;} }
+  .home-list{display:flex; flex-direction:column; gap:2px;}
+  .home-row{display:flex; align-items:center; gap:12px; padding:12px 6px; border-bottom:1px solid var(--line);}
+  .home-row:last-child{border-bottom:none;}
+  .home-row .ic{width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-size:15px; flex:none;}
+  .home-row .t{flex:1; font-size:13.5px;}
+  .home-row .t b{display:block; font-size:13.5px;}
+  .home-row .t span{color:var(--text-faint); font-size:12px;}
+  .home-row .tag{font-size:11px; padding:4px 10px; border-radius:100px; font-weight:700; flex:none;}
+  .quick-agents{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:6px;}
+  @media (max-width:700px){ .quick-agents{grid-template-columns:repeat(2,1fr);} }
+  .quick-agent{
+    display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:14px; border-radius:14px;
+    border:1px solid var(--line); background:var(--surface-2); cursor:pointer; text-align:left; transition:transform .15s, border-color .15s;
+  }
+  .quick-agent:hover{transform:translateY(-2px); border-color:var(--primary);}
+  .quick-agent .ic{width:32px; height:32px; border-radius:9px; display:grid; place-items:center; font-size:15px;}
+  .quick-agent b{font-size:12.5px;}
+
+  /* ---------- MOCK RESPONSE DETAIL CARD ---------- */
+  .mock-card{margin-top:14px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;}
+  .mock-card .mc-head{padding:10px 16px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); background:var(--surface-2); border-bottom:1px solid var(--line);}
+  .mock-card .mc-row{display:flex; justify-content:space-between; gap:14px; padding:10px 16px; font-size:13px; border-bottom:1px solid var(--line);}
+  .mock-card .mc-row:last-child{border-bottom:none;}
+  .mock-card .mc-row .k{color:var(--text-faint);}
+  .mock-card .mc-row .v{color:var(--text); font-weight:600; text-align:right;}
+
   footer{border-top:1px solid var(--line); padding:32px 0; margin-top:20px; color:var(--text-faint); font-size:13px; text-align:center;}
 </style>
 </head>
@@ -221,7 +297,7 @@
    "Connect a Database" tab and README.md for a worked example. */
 const DataService = {
   getStudent(){
-    return { name:"Ananya Rao", roll:"20B91A0512", branch:"CSE (AI & ML)", year:"3rd Year", section:"B" };
+    return { name:" ashwin", roll:"20B91A0512", branch:"CSE (AI & ML)", year:"3rd Year", section:"B" };
   },
   getResults(semester){
     const data = {
@@ -315,22 +391,120 @@ function responseFor(agentId){
   return templates[agentId] || "Routed to the right specialist agent.";
 }
 
+/* ---------------- MOCK AGENT RESPONSE DATA ----------------
+   Small deterministic "backend" that fabricates a plausible structured
+   result per agent, so the demo shows a realistic payload rather than
+   just a sentence. Swap for a real agent response once the backend
+   is wired up — see the "Connect a Database" tab. */
+function seedFrom(str){
+  let h = 0;
+  for (let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
+  return h;
+}
+function pad4(n){ return String(n % 10000).padStart(4,"0"); }
+
+function mockDetailsFor(agentId, query){
+  const seed = seedFrom(query || "request");
+  const attendance = DataService.getAttendance();
+  const overall = Math.round(attendance.reduce((a,r)=>a+r.pct,0)/attendance.length);
+
+  const byId = {
+    procurement: {
+      title: "Procurement request",
+      rows: [
+        ["Request ID", "PR-" + pad4(seed)],
+        ["Item", query.length > 40 ? query.slice(0,40)+"…" : query],
+        ["Vendor", "Campus Store & Supplies"],
+        ["Status", "Pending HOD approval"],
+        ["Est. turnaround", "3–5 working days"],
+      ],
+    },
+    event: {
+      title: "Event registration",
+      rows: [
+        ["Registration ID", "EVT-" + pad4(seed)],
+        ["Venue", "Auditorium"],
+        ["Date & time", "Tomorrow · 10:00 AM"],
+        ["Status", "Confirmed"],
+        ["Certificate", "Issued after attendance is marked"],
+      ],
+    },
+    calendar: {
+      title: "Calendar entry",
+      rows: [
+        ["Event", query.length > 40 ? query.slice(0,40)+"…" : query],
+        ["Added to", "Personal calendar"],
+        ["Reminder", "30 mins before"],
+        ["Status", "Synced"],
+      ],
+    },
+    notification: {
+      title: "Reminder scheduled",
+      rows: [
+        ["Reminder ID", "NTF-" + pad4(seed)],
+        ["Channel", "Push + Email"],
+        ["Lead time", "1 hour before"],
+        ["Status", "Scheduled"],
+      ],
+    },
+    student_services: {
+      title: "Student record check",
+      rows: [
+        ["Overall attendance", overall + "%"],
+        ["Exam eligibility (75% rule)", overall >= 75 ? "Eligible" : "Below threshold"],
+        ["Ticket ID", "SS-" + pad4(seed)],
+        ["Status", overall >= 75 ? "No action needed" : "Condonation form drafted"],
+      ],
+    },
+    knowledge: {
+      title: "Policy lookup",
+      rows: [
+        ["Source", "Academic Regulations, Section 4.2"],
+        ["Topic", "Attendance & exam eligibility"],
+        ["Confidence", "High"],
+        ["Status", "Answer grounded in circular"],
+      ],
+    },
+    communication: {
+      title: "Drafted message",
+      rows: [
+        ["To", "hod-cseaiml@vasavi.ac.in"],
+        ["Subject", query.length > 34 ? query.slice(0,34)+"…" : (query || "Request")],
+        ["Tone", "Formal"],
+        ["Status", "Draft ready for your review"],
+      ],
+    },
+  };
+  return byId[agentId] || { title:"Result", rows:[["Status","Routed"]] };
+}
+
+function renderMockCard(agentId, query){
+  const d = mockDetailsFor(agentId, query);
+  const rows = d.rows.map(([k,v])=>`
+      <div class="mc-row"><span class="k">${escapeHtml(k)}</span><span class="v">${escapeHtml(v)}</span></div>`).join("");
+  return `
+    <div class="mock-card">
+      <div class="mc-head">${escapeHtml(d.title)} · mock data</div>
+      ${rows}
+    </div>`;
+}
+
 /* ---------------- CAMPUS MAP DATA ----------------
    Stylised layout of Unify College of Engineering (Ibrahimbagh, Hyderabad).
    Building names are real; positions are a simplified schematic for this
    demo — swap in real coordinates from a surveyed campus map if you have one. */
 const CAMPUS_PLACES = [
-  { id:"admin", name:"Administrative Block", type:"building", x:230, y:120, info:"Admissions, accounts and the principal's office." },
-  { id:"visv", name:"Visvesvaraya Block", type:"building", x:120, y:210, info:"One of the college's oldest blocks — Civil & Mechanical Engineering." },
-  { id:"bose", name:"Bose Block", type:"building", x:340, y:200, info:"Core instructional block for Electrical & Electronics Engineering." },
-  { id:"ramanujan", name:"Ramanujan Block", type:"building", x:470, y:150, info:"Computer Centre, CSE & IT departments, server room." },
-  { id:"sarabhai", name:"Vikram Sarabhai Block", type:"building", x:490, y:290, info:"Newer block with modern architecture — AI & ML, ECE labs." },
+  { id:"admin", name:"Admin Block", type:"building", x:230, y:120, info:"Admissions, accounts and the principal's office." },
+  { id:"visv", name:"Civil Block", type:"building", x:120, y:210, info:"Core instructional block for Civil & Mechanical Engineering." },
+  { id:"bose", name:"EEE Block", type:"building", x:340, y:200, info:"Core instructional block for Electrical & Electronics Engineering." },
+  { id:"ramanujan", name:"CSE Block", type:"building", x:470, y:150, info:"Computer Centre, CSE & IT departments, server room." },
+  { id:"sarabhai", name:"AI & ML Block", type:"building", x:490, y:290, info:"Newer block with modern architecture — AI & ML, ECE labs." },
   { id:"library", name:"Central Library", type:"building", x:280, y:300, info:"Multi-floor library with reading halls and a digital section." },
-  { id:"auditorium", name:"Auditorium", type:"entertainment", x:140, y:340, info:"Hosts Acumen (tech fest), Euphoria (cultural fest) and seminars." },
+  { id:"auditorium", name:"Auditorium", type:"entertainment", x:140, y:340, info:"Hosts the tech fest, cultural fest and seminars." },
   { id:"canteen", name:"Canteen", type:"food", x:360, y:360, info:"Main canteen — quick meals, snacks and chai between classes." },
-  { id:"juice", name:"Juice & Snacks Corner", type:"food", x:230, y:420, info:"Popular juice and snacks stall near the lawns." },
+  { id:"juice", name:"Juice Corner", type:"food", x:230, y:420, info:"Popular juice and snacks stall near the lawns." },
   { id:"sports", name:"Sports Ground", type:"entertainment", x:480, y:420, info:"Cricket, football and athletics — also used for college day events." },
-  { id:"court", name:"Basketball & Volleyball Court", type:"entertainment", x:130, y:460, info:"Evening pickup games — open to all students." },
+  { id:"court", name:"Sports Court", type:"entertainment", x:130, y:460, info:"Evening pickup games — open to all students." },
   { id:"lawns", name:"Green Lawns", type:"entertainment", x:330, y:250, info:"Shaded lawns — the go-to spot for group study or a break between classes." },
 ];
 const PLACE_STYLE = {
@@ -341,11 +515,13 @@ const PLACE_STYLE = {
 
 /* ---------------- APP STATE ---------------- */
 const STATE = {
-  tab: "orchestrator",
+  tab: "home",
   sem: "Sem 5",
   orchQuery: "",
   orchResult: null,
   mapSelected: null,
+  sidebarOpen: false,
+  homeSearch: "",
 };
 
 const EXAMPLES = [
@@ -385,6 +561,68 @@ function pageHead(kicker, title, sub){
     </div>`;
 }
 
+/* ---------------- HOMEPAGE ---------------- */
+function renderHome(){
+  const student = DataService.getStudent();
+  const attendance = DataService.getAttendance();
+  const overall = Math.round(attendance.reduce((a,r)=>a+r.pct,0)/attendance.length);
+  const results = DataService.getResults(STATE.sem);
+  const totalCredits = results.reduce((a,r)=>a+r.credits,0);
+  const sgpa = results.length ? (results.reduce((a,r)=>a + r.credits*r.points,0)/totalCredits).toFixed(2) : "—";
+  const atRisk = attendance.filter(a=>a.pct < 75).length;
+
+  const stats = [
+    { ic:"🎓", bg:"var(--primary-dim)", color:"var(--primary)", value: sgpa, label:`SGPA — ${STATE.sem}` },
+    { ic:"📅", bg:"var(--teal-dim)", color:"var(--teal)", value: overall+"%", label:"Overall attendance" },
+    { ic:"⚠️", bg:"var(--amber-dim)", color:"var(--amber)", value: atRisk, label:"Subjects below 75%" },
+    { ic:"🤖", bg:"var(--rose-dim)", color:"var(--rose)", value: AGENTS.length, label:"Agents on call" },
+  ];
+  const statsHtml = stats.map(s=>`
+    <div class="home-stat">
+      <div class="hs-ic" style="background:${s.bg};color:${s.color}">${s.ic}</div>
+      <b>${escapeHtml(String(s.value))}</b>
+      <span>${escapeHtml(s.label)}</span>
+    </div>`).join("");
+
+  const activityRows = [
+    { agent: AGENTS.find(a=>a.id==="student_services"), text:"Attendance report refreshed", when:"Just now" },
+    { agent: AGENTS.find(a=>a.id==="event"), text:"Registration confirmed for AI Workshop", when:"Yesterday" },
+    { agent: AGENTS.find(a=>a.id==="procurement"), text:"Arduino kit request awaiting HOD approval", when:"2 days ago" },
+    { agent: AGENTS.find(a=>a.id==="knowledge"), text:"Answered a question on the condonation policy", when:"3 days ago" },
+  ].map(item=>`
+    <div class="home-row">
+      <div class="ic" style="background:${item.agent.bg};color:${item.agent.color}">${item.agent.icon}</div>
+      <div class="t"><b>${escapeHtml(item.text)}</b><span>${escapeHtml(item.agent.name)} · ${escapeHtml(item.when)}</span></div>
+    </div>`).join("");
+
+  const quickAgents = AGENTS.slice(0,4).map(a=>`
+    <button class="quick-agent" data-quick-agent="${a.id}">
+      <div class="ic" style="background:${a.bg};color:${a.color}">${a.icon}</div>
+      <b>${escapeHtml(a.name)}</b>
+    </button>`).join("");
+
+  return `
+    ${pageHead("Home", `Welcome back, ${student.name.split(" ")[0]}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
+    <div class="home-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="home-search-input" type="text" placeholder="Ask for anything — “remind me about my project deadline”" value="${escapeHtml(STATE.homeSearch)}" />
+      <button class="btn btn-primary" id="home-search-btn">Ask →</button>
+    </div>
+
+    <div class="home-stats">${statsHtml}</div>
+
+    <div class="home-grid">
+      <div class="card">
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">Recent activity</h3>
+        <div class="home-list">${activityRows}</div>
+      </div>
+      <div class="card">
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">Jump to an agent</h3>
+        <div class="quick-agents">${quickAgents}</div>
+      </div>
+    </div>`;
+}
+
 /* ---------------- ORCHESTRATOR PAGE ---------------- */
 function renderOrchestrator(){
   const exampleChips = EXAMPLES.map((ex,i)=>
@@ -409,6 +647,7 @@ function renderOrchestrator(){
           <b>Orchestrator:</b> Routed "${escapeHtml(r.query)}" to the ${escapeHtml(r.agent.name)}.<br/><br/>
           <b>${escapeHtml(r.agent.name)}:</b> ${escapeHtml(r.response)}
         </div>
+        ${renderMockCard(r.agent.id, r.query)}
       </div>`;
   } else {
     resultHtml = `<div class="route-result empty">Type a request above, or tap an example, to see it get routed.</div>`;
@@ -430,6 +669,14 @@ function renderOrchestrator(){
         <div class="agents-mini">${miniAgents}</div>
       </div>
     </div>`;
+}
+
+function runFromHome(){
+  const text = STATE.homeSearch.trim();
+  if (!text) return;
+  STATE.tab = "orchestrator";
+  STATE.orchQuery = text;
+  runOrchestrator(text);
 }
 
 function runOrchestrator(query){
@@ -618,14 +865,16 @@ const DataService = {
 
 /* ---------------- SHELL: NAV + FOOTER ---------------- */
 const TABS = [
-  ["orchestrator","Orchestrator"],
-  ["agents","Agents"],
-  ["results","Results"],
-  ["attendance","Attendance"],
-  ["map","Campus Map"],
-  ["database","Connect a Database"],
+  ["home","Home","🏠"],
+  ["orchestrator","Orchestrator","💬"],
+  ["agents","Agents","🧩"],
+  ["results","Results","📊"],
+  ["attendance","Attendance","📅"],
+  ["map","Campus Map","🗺️"],
+  ["database","Connect a Database","🗄️"],
 ];
 const PAGE_RENDERERS = {
+  home: renderHome,
   orchestrator: renderOrchestrator,
   agents: renderAgents,
   results: renderResults,
@@ -634,20 +883,52 @@ const PAGE_RENDERERS = {
   database: renderDatabase,
 };
 
+/* Modern abstract logomark: a small hub-and-spoke network — reflects the
+   orchestrator routing a request out to specialist agents. Inline SVG so
+   it never depends on an external image loading. */
+const LOGO_SVG = `<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="16" cy="16" r="4.2" fill="#fff"/>
+  <circle cx="6" cy="9" r="2.6" fill="#fff" fill-opacity="0.9"/>
+  <circle cx="26" cy="9" r="2.6" fill="#fff" fill-opacity="0.9"/>
+  <circle cx="6" cy="24" r="2.6" fill="#fff" fill-opacity="0.9"/>
+  <circle cx="26" cy="24" r="2.6" fill="#fff" fill-opacity="0.9"/>
+  <path d="M13.4 13.8 L7.6 10.3 M18.6 13.8 L24.4 10.3 M13.4 18.2 L7.6 22.2 M18.6 18.2 L24.4 22.2"
+        stroke="#fff" stroke-width="1.4" stroke-linecap="round" opacity="0.85"/>
+</svg>`;
+const ICON_MENU = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>`;
+const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>`;
+
 function renderNav(){
-  const tabs = TABS.map(([id,label])=>
-    `<button class="tab-btn${STATE.tab===id?" active":""}" data-tab="${id}">${escapeHtml(label)}</button>`).join("");
   return `
     <header class="nav">
       <div class="nav-inner">
-        <div class="brand"><span class="mark">V</span>Unify Connect</div>
-        <nav class="tabs">${tabs}</nav>
+        <div class="nav-left">
+          <button class="hamburger" id="sidebar-toggle" aria-label="Open menu">${ICON_MENU}</button>
+          <div class="brand"><span class="mark">${LOGO_SVG}</span>Unify Connect</div>
+        </div>
         <div class="nav-user">
-          <span>Ananya Rao · CSE (AI&amp;ML)</span>
+          <span> Ashwin  · CSE (AI&amp;ML)</span>
           <div class="avatar">AR</div>
         </div>
       </div>
     </header>`;
+}
+
+function renderSidebar(){
+  const links = TABS.map(([id,label,icon])=>
+    `<button class="side-link${STATE.tab===id?" active":""}" data-tab="${id}">
+       <span class="side-ic">${icon}</span>${escapeHtml(label)}
+     </button>`).join("");
+  return `
+    <div class="sidebar-overlay${STATE.sidebarOpen?" open":""}" id="sidebar-overlay"></div>
+    <aside class="sidebar${STATE.sidebarOpen?" open":""}" id="sidebar" aria-label="Main navigation">
+      <div class="sidebar-head">
+        <div class="brand" style="font-size:15px"><span class="mark" style="width:26px;height:26px;border-radius:7px">${LOGO_SVG}</span>Unify Connect</div>
+        <button class="sidebar-close" id="sidebar-close" aria-label="Close menu">${ICON_CLOSE}</button>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:2px">${links}</nav>
+      <div class="sidebar-foot">Vasavi College of Engineering · Ibrahimbagh, Hyderabad</div>
+    </aside>`;
 }
 
 /* ---------------- RENDER LOOP ---------------- */
@@ -655,6 +936,7 @@ function render(){
   const root = document.getElementById('root');
   root.innerHTML = `
     ${renderNav()}
+    ${renderSidebar()}
     <main class="wrap">${PAGE_RENDERERS[STATE.tab]()}</main>
     <footer> Unify Connect </footer>`;
   attachHandlers();
@@ -664,9 +946,42 @@ function render(){
 function attachHandlers(){
   const root = document.getElementById('root');
 
-  // Nav tabs
+  // Sidebar nav links
   root.querySelectorAll('[data-tab]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{ STATE.tab = btn.getAttribute('data-tab'); render(); });
+    btn.addEventListener('click', ()=>{
+      STATE.tab = btn.getAttribute('data-tab');
+      STATE.sidebarOpen = false;
+      render();
+    });
+  });
+
+  // Hamburger / sidebar open-close
+  const toggle = document.getElementById('sidebar-toggle');
+  if (toggle){ toggle.addEventListener('click', ()=>{ STATE.sidebarOpen = true; render(); }); }
+  const closeBtn = document.getElementById('sidebar-close');
+  if (closeBtn){ closeBtn.addEventListener('click', ()=>{ STATE.sidebarOpen = false; render(); }); }
+  const overlay = document.getElementById('sidebar-overlay');
+  if (overlay){ overlay.addEventListener('click', ()=>{ STATE.sidebarOpen = false; render(); }); }
+
+  // Homepage search bar — routes straight into the orchestrator
+  const homeInput = document.getElementById('home-search-input');
+  if (homeInput){
+    homeInput.addEventListener('input', ()=>{ STATE.homeSearch = homeInput.value; });
+    homeInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') runFromHome(); });
+  }
+  const homeBtn = document.getElementById('home-search-btn');
+  if (homeBtn){ homeBtn.addEventListener('click', ()=> runFromHome()); }
+
+  // Homepage quick-agent shortcuts
+  root.querySelectorAll('[data-quick-agent]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const agentId = btn.getAttribute('data-quick-agent');
+      const agent = AGENTS.find(a=>a.id===agentId);
+      STATE.tab = "orchestrator";
+      STATE.orchQuery = "";
+      STATE.orchResult = agent ? { query:`Help me with ${agent.name.replace(" Agent","").toLowerCase()}`, agent, confidence:88, response: responseFor(agent.id) } : null;
+      render();
+    });
   });
 
   // Orchestrator
