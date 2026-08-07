@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Vasavi Connect — Your Campus, One Request Away</title>
-<meta name="description" content="Vasavi Connect is an orchestrator-agent campus assistant for Vasavi College of Engineering — routes requests to the right agent, shows results, attendance and a campus map." />
+<title>Unify Connect — Your Campus, One Request Away</title>
+<meta name="description" content="Unify Connect is an orchestrator-agent campus assistant for Vasavi College of Engineering — routes requests to the right agent, shows results, attendance and a campus map." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -566,7 +566,7 @@ function renderMap(){
     : `<p class="placeholder">Tap any marker on the map to see what's there — academic blocks, canteens, and spots to relax between classes.</p>`;
 
   return `
-    ${pageHead("Vasavi College of Engineering", "Campus map", "A stylised layout of the Ibrahimbagh campus — academic blocks, food spots and entertainment/relax areas. Tap a marker for details.")}
+    ${pageHead("Unify College of Engineering", "Campus map", "A stylised layout of the Ibrahimbagh campus — academic blocks, food spots and entertainment/relax areas. Tap a marker for details.")}
     <div class="map-legend">${legend}</div>
     <div class="map-shell">
       <div class="map-svg-wrap">
@@ -656,7 +656,7 @@ function render(){
   root.innerHTML = `
     ${renderNav()}
     <main class="wrap">${PAGE_RENDERERS[STATE.tab]()}</main>
-    <footer>Vasavi Connect · built for the campus AI hackathon · agent routing runs client-side for this demo</footer>`;
+    <footer> Unify Connect </footer>`;
   attachHandlers();
 }
 
