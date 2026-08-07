@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Vasavi Connect — Your Campus, One Request Away</title>
+<meta name="description" content="Vasavi Connect is an orchestrator-agent campus assistant for Vasavi College of Engineering — routes requests to the right agent, shows results, attendance and a campus map." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- No external JS dependencies — plain HTML/CSS/JS only, so this page
+     never depends on a CDN being reachable. If the Google Fonts request
+     above fails or is blocked, the page still renders fine with system fonts. -->
+
+<style>
+  :root{
+    --bg:#F7F7FB;
+    --bg-2:#F0F1FA;
+    --surface:#FFFFFF;
+    --surface-2:#F5F5FC;
+    --line:#E7E7F3;
+    --line-strong:#D9D9EE;
+    --text:#211F35;
+    --text-dim:#6B6A85;
+    --text-faint:#9694AC;
+    --primary:#6C5CE7;
+    --primary-dim:#EFECFD;
+    --primary-2:#8B7CF0;
+    --coral:#FF7A59;
+    --coral-dim:#FFEBE4;
+    --teal:#1FBFA8;
+    --teal-dim:#E3FBF6;
+    --amber:#F5A623;
+    --amber-dim:#FFF3DE;
+    --rose:#FF6188;
+    --rose-dim:#FFE9EF;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --font-display:'Plus Jakarta Sans', system-ui, sans-serif;
+    --font-body:'Inter', system-ui, sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+    --max:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(900px 480px at 10% -10%, rgba(108,92,231,0.08), transparent 60%),
+      radial-gradient(800px 420px at 95% 0%, rgba(31,191,168,0.08), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+  a{color:inherit;}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--primary); outline-offset:2px; border-radius:6px;}
+  .wrap{max-width:var(--max); margin:0 auto; padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(247,247,251,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:var(--max); margin:0 auto; gap:20px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:18px;}
+  .brand .mark{
+    width:30px; height:30px; border-radius:9px;
+    background:linear-gradient(135deg, var(--primary), var(--teal));
+    display:grid; place-items:center; color:#fff; font-size:14px; font-weight:800;
+  }
+  .tabs{display:flex; gap:4px; background:var(--surface-2); padding:4px; border-radius:100px; border:1px solid var(--line); overflow-x:auto;}
+  .tab-btn{
+    border:none; background:transparent; padding:9px 16px; border-radius:100px;
+    font-size:13.5px; font-weight:600; color:var(--text-dim); cursor:pointer;
+    white-space:nowrap; transition:all .15s;
+  }
+  .tab-btn.active{background:var(--text); color:#fff;}
+  .tab-btn:hover:not(.active){background:var(--surface);}
+  .nav-user{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-dim); flex:none;}
+  .avatar{width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--coral), var(--amber)); display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px;}
+  @media (max-width:900px){ .nav-user span{display:none;} }
+
+  main{padding:44px 0 80px;}
+  .page-head{margin-bottom:32px;}
+  .kicker{font-family:var(--font-mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase; color:var(--primary); margin-bottom:8px; font-weight:500;}
+  h1.page-title{font-family:var(--font-display); font-size:clamp(26px,3.4vw,36px); margin:0 0 8px; letter-spacing:-0.01em;}
+  .page-sub{color:var(--text-dim); font-size:15px; margin:0; max-width:60ch;}
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:28px;}
+  .grid-2{display:grid; grid-template-columns:1.1fr 0.9fr; gap:24px;}
+  @media (max-width:940px){ .grid-2{grid-template-columns:1fr;} }
+
+  /* ---------- ORCHESTRATOR PAGE ---------- */
+  .orch-input-row{display:flex; gap:10px; margin-bottom:14px;}
+  .orch-input-row textarea{
+    flex:1; resize:vertical; min-height:64px; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:var(--radius-md); padding:14px 16px;
+    font-family:var(--font-body); font-size:14.5px; color:var(--text);
+  }
+  .orch-input-row textarea::placeholder{color:var(--text-faint);}
+  .btn{font-family:var(--font-body); font-weight:700; font-size:14px; padding:13px 22px; border-radius:12px; border:none; cursor:pointer; transition:transform .15s, opacity .15s; display:inline-flex; align-items:center; gap:8px;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--primary); color:#fff;}
+  .btn-ghost{background:var(--surface-2); color:var(--text); border:1px solid var(--line);}
+  .btn-block{width:100%; justify-content:center;}
+  .example-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+  .chip{font-size:12.5px; color:var(--text-dim); background:var(--surface-2); border:1px solid var(--line); border-radius:100px; padding:7px 13px; cursor:pointer; transition:.15s;}
+  .chip:hover{border-color:var(--primary); color:var(--primary);}
+
+  .route-result{margin-top:24px; padding-top:24px; border-top:1px dashed var(--line);}
+  .route-result.empty{color:var(--text-faint); font-size:14px; padding:30px 0 6px; text-align:center; border-top:none;}
+  .agent-pill{display:inline-flex; align-items:center; gap:10px; padding:10px 16px; border-radius:100px; font-weight:700; font-size:14px; margin-bottom:14px;}
+  .agent-pill .dot{width:8px; height:8px; border-radius:50%; background:currentColor;}
+  .confidence-bar{height:6px; border-radius:100px; background:var(--surface-2); overflow:hidden; margin:10px 0 16px;}
+  .confidence-bar > div{height:100%; border-radius:100px; background:var(--primary);}
+  .route-response{background:var(--surface-2); border-radius:var(--radius-md); padding:16px 18px; font-size:14px; color:var(--text-dim);}
+  .route-response b{color:var(--text);}
+
+  .agents-mini{display:grid; grid-template-columns:1fr; gap:10px;}
+  .mini-agent{display:flex; align-items:center; gap:12px; padding:12px; border-radius:var(--radius-md); border:1px solid var(--line); background:var(--surface-2);}
+  .mini-agent .ic{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; font-size:16px; flex:none;}
+  .mini-agent .t{font-size:13px;}
+  .mini-agent .t b{display:block; font-size:13.5px;}
+  .mini-agent .t span{color:var(--text-faint); font-size:12px;}
+
+  /* ---------- AGENT GRID PAGE ---------- */
+  .agent-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
+  @media (max-width:900px){ .agent-grid{grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:600px){ .agent-grid{grid-template-columns:1fr;} }
+  .agent-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:22px; transition:transform .15s, box-shadow .15s;}
+  .agent-card:hover{transform:translateY(-3px); box-shadow:0 16px 30px -18px rgba(33,31,53,0.18);}
+  .agent-card .ic{width:44px; height:44px; border-radius:12px; display:grid; place-items:center; font-size:20px; margin-bottom:14px;}
+  .agent-card h3{font-family:var(--font-display); font-size:16.5px; margin:0 0 6px;}
+  .agent-card p{color:var(--text-dim); font-size:13.5px; margin:0 0 14px; line-height:1.55;}
+  .agent-card .tags{display:flex; flex-wrap:wrap; gap:6px;}
+  .tagpill{font-size:11px; padding:4px 9px; border-radius:100px; background:var(--surface-2); color:var(--text-faint); border:1px solid var(--line);}
+
+  /* ---------- RESULTS PAGE ---------- */
+  .student-strip{display:flex; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap;}
+  .student-strip .avatar{width:54px; height:54px; font-size:18px;}
+  .student-strip h2{font-family:var(--font-display); font-size:19px; margin:0;}
+  .student-strip .meta{color:var(--text-dim); font-size:13px;}
+  .sem-select{display:flex; gap:8px; margin-left:auto;}
+  .sem-btn{padding:8px 14px; border-radius:100px; border:1px solid var(--line); background:var(--surface); color:var(--text-dim); font-size:13px; font-weight:600; cursor:pointer;}
+  .sem-btn.active{background:var(--primary); border-color:var(--primary); color:#fff;}
+
+  table{width:100%; border-collapse:collapse;}
+  th{text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); font-weight:600; padding:10px 14px; border-bottom:1px solid var(--line);}
+  td{padding:14px; border-bottom:1px solid var(--line); font-size:14px;}
+  tr:last-child td{border-bottom:none;}
+  .grade-badge{display:inline-flex; padding:4px 11px; border-radius:100px; font-weight:700; font-size:12.5px;}
+  .stat-row{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:20px;}
+  .stat-box{background:var(--surface-2); border-radius:var(--radius-md); padding:16px 18px;}
+  .stat-box b{display:block; font-family:var(--font-display); font-size:24px;}
+  .stat-box span{font-size:12px; color:var(--text-faint);}
+
+  /* ---------- ATTENDANCE PAGE ---------- */
+  .att-overview{display:flex; align-items:center; gap:26px; flex-wrap:wrap;}
+  .donut{width:140px; height:140px; border-radius:50%; display:grid; place-items:center; flex:none;}
+  .donut .hole{width:104px; height:104px; border-radius:50%; background:var(--surface); display:grid; place-items:center; text-align:center;}
+  .donut .hole b{font-family:var(--font-display); font-size:26px; display:block;}
+  .donut .hole span{font-size:11px; color:var(--text-faint);}
+  .att-list{display:flex; flex-direction:column; gap:14px; margin-top:22px;}
+  .att-row{display:grid; grid-template-columns:150px 1fr 60px 90px; align-items:center; gap:14px; font-size:13.5px;}
+  @media (max-width:640px){ .att-row{grid-template-columns:110px 1fr 44px; } .att-row .att-status{display:none;} }
+  .att-track{height:9px; border-radius:100px; background:var(--surface-2); overflow:hidden;}
+  .att-track > div{height:100%; border-radius:100px;}
+  .status-badge{font-size:11px; padding:4px 10px; border-radius:100px; font-weight:700; text-align:center;}
+
+  /* ---------- MAP PAGE ---------- */
+  .map-shell{display:grid; grid-template-columns:1fr 300px; gap:20px;}
+  @media (max-width:900px){ .map-shell{grid-template-columns:1fr;} }
+  .map-legend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; font-size:12.5px; color:var(--text-dim);}
+  .map-legend .item{display:flex; align-items:center; gap:6px;}
+  .legend-dot{width:10px; height:10px; border-radius:3px;}
+  .map-svg-wrap{background:linear-gradient(180deg, #E9F6EE, #F3FAF4); border:1px solid var(--line); border-radius:var(--radius-lg); padding:14px; overflow:hidden;}
+  .map-info{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg); padding:20px;}
+  .map-info h4{font-family:var(--font-display); font-size:16px; margin:0 0 6px;}
+  .map-info p{color:var(--text-dim); font-size:13.5px; margin:0; line-height:1.55;}
+  .map-info .placeholder{color:var(--text-faint); font-size:13.5px;}
+  .pin{cursor:pointer;}
+  .pin circle.ring{opacity:0; transition:opacity .15s;}
+  .pin:hover circle.ring, .pin.selected circle.ring{opacity:1;}
+  .pin text{font-family:var(--font-body); font-size:9.5px; font-weight:600; fill:var(--text);}
+
+  /* ---------- DB PANEL ---------- */
+  .db-panel{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
+  @media (max-width:860px){ .db-panel{grid-template-columns:1fr;} }
+  pre.code{background:#221F35; color:#E9E7FA; border-radius:var(--radius-md); padding:18px; font-family:var(--font-mono); font-size:12.5px; overflow-x:auto; line-height:1.6;}
+  .db-steps{display:flex; flex-direction:column; gap:12px;}
+  .db-step{display:flex; gap:12px;}
+  .db-step .n{flex:none; width:26px; height:26px; border-radius:50%; background:var(--primary-dim); color:var(--primary); display:grid; place-items:center; font-size:12.5px; font-weight:700;}
+  .db-step p{margin:0; font-size:13.5px; color:var(--text-dim);}
+  .db-step b{color:var(--text);}
+
+  footer{border-top:1px solid var(--line); padding:32px 0; margin-top:20px; color:var(--text-faint); font-size:13px; text-align:center;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+/* =========================================================================
+   VASAVI CONNECT — plain HTML/CSS/JS, zero external script dependencies.
+   Everything below is one file: data, the orchestrator classifier, and a
+   tiny render loop that swaps innerHTML per tab. No React, no build step,
+   no CDN — so it can never fail to load because of a blocked/slow CDN.
+   ========================================================================= */
+
+/* ---------------- DATA LAYER ----------------
+   Swap this for real API/DB calls when you're ready. Every function below
+   returns data synchronously from mock arrays. To connect a real database
+   (Supabase/Firebase/your own REST API), turn a function into an `async`
+   function that fetches and returns the same shape — see the
+   "Connect a Database" tab and README.md for a worked example. */
+const DataService = {
+  getStudent(){
+    return { name:"Ananya Rao", roll:"20B91A0512", branch:"CSE (AI & ML)", year:"3rd Year", section:"B" };
+  },
+  getResults(semester){
+    const data = {
+      "Sem 5": [
+        {code:"AML501", subject:"Machine Learning", credits:4, grade:"A", points:9},
+        {code:"CSE502", subject:"Operating Systems", credits:4, grade:"A+", points:10},
+        {code:"AML503", subject:"Deep Learning", credits:3, grade:"B+", points:8},
+        {code:"CSE504", subject:"Computer Networks", credits:3, grade:"A", points:9},
+        {code:"HSS505", subject:"Engineering Economics", credits:2, grade:"A+", points:10},
+        {code:"AML506", subject:"ML Lab", credits:2, grade:"A+", points:10},
+      ],
+      "Sem 4": [
+        {code:"CSE401", subject:"Data Structures", credits:4, grade:"A", points:9},
+        {code:"CSE402", subject:"DBMS", credits:4, grade:"A+", points:10},
+        {code:"CSE403", subject:"Discrete Mathematics", credits:3, grade:"B", points:7},
+        {code:"CSE404", subject:"OOP with Java", credits:3, grade:"A", points:9},
+        {code:"HSS405", subject:"Professional Ethics", credits:2, grade:"A+", points:10},
+      ],
+    };
+    return data[semester] || [];
+  },
+  getAttendance(){
+    return [
+      {subject:"Machine Learning", pct:92},
+      {subject:"Operating Systems", pct:88},
+      {subject:"Deep Learning", pct:74},
+      {subject:"Computer Networks", pct:81},
+      {subject:"Engineering Economics", pct:69},
+      {subject:"ML Lab", pct:96},
+    ];
+  },
+  getAgents(){ return AGENTS; },
+  getCampusPlaces(){ return CAMPUS_PLACES; },
+};
+
+/* ---------------- AGENTS + ORCHESTRATOR CLASSIFIER ---------------- */
+const AGENTS = [
+  { id:"procurement", name:"Procurement Agent", icon:"🧾", color:"var(--amber)", bg:"var(--amber-dim)",
+    desc:"Handles lab equipment, stationery and vendor purchase requests — quotations, budget approval and order tracking.",
+    tags:["Purchase orders","Vendor quotes","Budget approval"],
+    keywords:["purchase","buy","order","equipment","vendor","quotation","quote","budget","supplies","inventory","stationery","procure"] },
+  { id:"event", name:"Event Agent", icon:"🎉", color:"var(--rose)", bg:"var(--rose-dim)",
+    desc:"Finds workshops, fests and hackathons, and handles registration and certificates end to end.",
+    tags:["Acumen","Euphoria","Workshops"],
+    keywords:["event","workshop","fest","hackathon","seminar","symposium","register","acumen","euphoria","competition","cultural","technical fest"] },
+  { id:"calendar", name:"Calendar Agent", icon:"🗓️", color:"var(--primary)", bg:"var(--primary-dim)",
+    desc:"Adds deadlines and exam dates to your calendar and manages your personal schedule.",
+    tags:["Timetable","Exam dates","Scheduling"],
+    keywords:["calendar","schedule","timetable","deadline","exam date","add to calendar","when is","clash"] },
+  { id:"notification", name:"Notification Agent", icon:"🔔", color:"var(--coral)", bg:"var(--coral-dim)",
+    desc:"Sends reminders and broadcasts important announcements at the right time.",
+    tags:["Reminders","Alerts","Broadcasts"],
+    keywords:["remind","notify","alert","notification","broadcast","announce","circulate","sms","push"] },
+  { id:"student_services", name:"Student Services Agent", icon:"🎓", color:"var(--teal)", bg:"var(--teal-dim)",
+    desc:"Attendance checks, bonafide certificates, fee receipts, scholarships and grievances.",
+    tags:["Attendance","Certificates","Scholarships"],
+    keywords:["attendance","bonafide","certificate","fee receipt","scholarship","grievance","id card","transfer certificate","eligib"] },
+  { id:"knowledge", name:"Knowledge Agent", icon:"📚", color:"#7C5CFC", bg:"#EFE9FF",
+    desc:"Reads college policies, circulars and the syllabus (RAG) to answer rule-based questions with sources.",
+    tags:["Policies","Syllabus","Circulars"],
+    keywords:["policy","rule","syllabus","curriculum","circular","faq","procedure","regulation","what is the rule","how many credits"] },
+  { id:"communication", name:"Communication Agent", icon:"✉️", color:"#2D9CDB", bg:"#E4F3FC",
+    desc:"Drafts emails, applications and letters to faculty or administration on your behalf.",
+    tags:["Emails","Applications","Letters"],
+    keywords:["email","letter","draft","apply","application","write to","contact","complaint letter","leave letter"] },
+];
+
+function classify(text){
+  const s = text.toLowerCase();
+  let best = null, bestScore = 0;
+  AGENTS.forEach(agent=>{
+    let score = 0;
+    agent.keywords.forEach(k=>{ if (s.includes(k)) score += 1; });
+    if (score > bestScore){ bestScore = score; best = agent; }
+  });
+  if (!best){ best = AGENTS.find(a=>a.id==="knowledge"); bestScore = 0; }
+  const confidence = Math.min(96, 52 + bestScore * 14);
+  return { agent: best, confidence };
+}
+
+function responseFor(agentId){
+  const templates = {
+    procurement: "Logged your request in the procurement queue and drafted a quotation request for the lab store. You'll get an approval status update once the HOD signs off.",
+    event: "Found a matching event and started your registration — you'll get a confirmation with the venue and timing shortly.",
+    calendar: "Added this to your calendar with a reminder set ahead of time. You can adjust the reminder window anytime.",
+    notification: "Reminder scheduled. You'll be notified in advance so you don't miss it.",
+    student_services: "Pulled your record and prepared the next step — application, certificate or eligibility check, whichever this needs.",
+    knowledge: "Checked the relevant college policy/circular and found the section that answers this.",
+    communication: "Drafted a message you can review and send — tone kept formal and to the point.",
+  };
+  return templates[agentId] || "Routed to the right specialist agent.";
+}
+
+/* ---------------- CAMPUS MAP DATA ----------------
+   Stylised layout of Vasavi College of Engineering (Ibrahimbagh, Hyderabad).
+   Building names are real; positions are a simplified schematic for this
+   demo — swap in real coordinates from a surveyed campus map if you have one. */
+const CAMPUS_PLACES = [
+  { id:"admin", name:"Administrative Block", type:"building", x:230, y:120, info:"Admissions, accounts and the principal's office." },
+  { id:"visv", name:"Visvesvaraya Block", type:"building", x:120, y:210, info:"One of the college's oldest blocks — Civil & Mechanical Engineering." },
+  { id:"bose", name:"Bose Block", type:"building", x:340, y:200, info:"Core instructional block for Electrical & Electronics Engineering." },
+  { id:"ramanujan", name:"Ramanujan Block", type:"building", x:470, y:150, info:"Computer Centre, CSE & IT departments, server room." },
+  { id:"sarabhai", name:"Vikram Sarabhai Block", type:"building", x:490, y:290, info:"Newer block with modern architecture — AI & ML, ECE labs." },
+  { id:"library", name:"Central Library", type:"building", x:280, y:300, info:"Multi-floor library with reading halls and a digital section." },
+  { id:"auditorium", name:"Auditorium", type:"entertainment", x:140, y:340, info:"Hosts Acumen (tech fest), Euphoria (cultural fest) and seminars." },
+  { id:"canteen", name:"Canteen", type:"food", x:360, y:360, info:"Main canteen — quick meals, snacks and chai between classes." },
+  { id:"juice", name:"Juice & Snacks Corner", type:"food", x:230, y:420, info:"Popular juice and snacks stall near the lawns." },
+  { id:"sports", name:"Sports Ground", type:"entertainment", x:480, y:420, info:"Cricket, football and athletics — also used for college day events." },
+  { id:"court", name:"Basketball & Volleyball Court", type:"entertainment", x:130, y:460, info:"Evening pickup games — open to all students." },
+  { id:"lawns", name:"Green Lawns", type:"entertainment", x:330, y:250, info:"Shaded lawns — the go-to spot for group study or a break between classes." },
+];
+const PLACE_STYLE = {
+  building: { fill:"#8B7CF0", label:"Academic Block" },
+  food: { fill:"#F5A623", label:"Food Spot" },
+  entertainment: { fill:"#1FBFA8", label:"Entertainment / Relax" },
+};
+
+/* ---------------- APP STATE ---------------- */
+const STATE = {
+  tab: "orchestrator",
+  sem: "Sem 5",
+  orchQuery: "",
+  orchResult: null,
+  mapSelected: null,
+};
+
+const EXAMPLES = [
+  "My attendance is 68%, am I eligible for exams?",
+  "Register me for tomorrow's AI workshop",
+  "I need to order 10 Arduino kits for the robotics lab",
+  "Remind me about my project submission deadline",
+  "What is the college's condonation policy?",
+  "Draft a leave application to my HOD",
+];
+
+/* ---------------- SMALL HELPERS ---------------- */
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str == null ? "" : String(str);
+  return d.innerHTML;
+}
+function gradeColor(grade){
+  if (grade==="A+") return {bg:"var(--teal-dim)", color:"var(--teal)"};
+  if (grade==="A") return {bg:"var(--primary-dim)", color:"var(--primary)"};
+  if (grade==="B+") return {bg:"var(--amber-dim)", color:"var(--amber)"};
+  return {bg:"var(--rose-dim)", color:"var(--rose)"};
+}
+function statusFor(pct){
+  if (pct >= 85) return {label:"Safe", bg:"var(--teal-dim)", color:"var(--teal)", bar:"var(--teal)"};
+  if (pct >= 75) return {label:"OK", bg:"var(--primary-dim)", color:"var(--primary)", bar:"var(--primary)"};
+  return {label:"At risk", bg:"var(--rose-dim)", color:"var(--rose)", bar:"var(--rose)"};
+}
+
+/* ---------------- PAGE HEAD ---------------- */
+function pageHead(kicker, title, sub){
+  return `
+    <div class="page-head">
+      <div class="kicker">${escapeHtml(kicker)}</div>
+      <h1 class="page-title">${escapeHtml(title)}</h1>
+      <p class="page-sub">${escapeHtml(sub)}</p>
+    </div>`;
+}
+
+/* ---------------- ORCHESTRATOR PAGE ---------------- */
+function renderOrchestrator(){
+  const exampleChips = EXAMPLES.map((ex,i)=>
+    `<span class="chip" data-example="${i}">${escapeHtml(ex)}</span>`).join("");
+
+  const miniAgents = AGENTS.map(a=>`
+    <div class="mini-agent">
+      <div class="ic" style="background:${a.bg};color:${a.color}">${a.icon}</div>
+      <div class="t"><b>${escapeHtml(a.name)}</b><span>${escapeHtml(a.tags.join(" · "))}</span></div>
+    </div>`).join("");
+
+  let resultHtml;
+  if (STATE.orchResult){
+    const r = STATE.orchResult;
+    resultHtml = `
+      <div class="route-result">
+        <div class="agent-pill" style="background:${r.agent.bg};color:${r.agent.color}">
+          <span class="dot"></span>${r.agent.icon} ${escapeHtml(r.agent.name)}
+        </div>
+        <div class="confidence-bar"><div style="width:${r.confidence}%"></div></div>
+        <div class="route-response">
+          <b>Orchestrator:</b> Routed "${escapeHtml(r.query)}" to the ${escapeHtml(r.agent.name)}.<br/><br/>
+          <b>${escapeHtml(r.agent.name)}:</b> ${escapeHtml(r.response)}
+        </div>
+      </div>`;
+  } else {
+    resultHtml = `<div class="route-result empty">Type a request above, or tap an example, to see it get routed.</div>`;
+  }
+
+  return `
+    ${pageHead("Orchestrator Agent", "Tell it what you need.", "One request box. The orchestrator reads it and routes it to the right specialist agent — no need to know which portal or department to go to.")}
+    <div class="grid-2">
+      <div class="card">
+        <div class="orch-input-row">
+          <textarea id="orch-textarea" placeholder="e.g. Register me for tomorrow's AI workshop and remind me an hour before">${escapeHtml(STATE.orchQuery)}</textarea>
+        </div>
+        <button class="btn btn-primary" id="orch-run-btn">Route my request →</button>
+        <div class="example-chips">${exampleChips}</div>
+        ${resultHtml}
+      </div>
+      <div class="card">
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">Available agents</h3>
+        <div class="agents-mini">${miniAgents}</div>
+      </div>
+    </div>`;
+}
+
+function runOrchestrator(query){
+  const text = (query != null ? query : STATE.orchQuery).trim();
+  if (!text) return;
+  STATE.orchQuery = text;
+  const { agent, confidence } = classify(text);
+  STATE.orchResult = { query:text, agent, confidence, response: responseFor(agent.id) };
+  render();
+}
+
+/* ---------------- AGENTS PAGE ---------------- */
+function renderAgents(){
+  const cards = AGENTS.map(a=>`
+    <div class="agent-card">
+      <div class="ic" style="background:${a.bg};color:${a.color}">${a.icon}</div>
+      <h3>${escapeHtml(a.name)}</h3>
+      <p>${escapeHtml(a.desc)}</p>
+      <div class="tags">${a.tags.map(t=>`<span class="tagpill">${escapeHtml(t)}</span>`).join("")}</div>
+    </div>`).join("");
+  return `
+    ${pageHead("Agent ecosystem", "Seven specialists, one entry point.", "Each agent owns one part of campus life. The orchestrator decides who handles your request — you never have to pick.")}
+    <div class="agent-grid">${cards}</div>`;
+}
+
+/* ---------------- RESULTS PAGE ---------------- */
+function renderResults(){
+  const student = DataService.getStudent();
+  const rows = DataService.getResults(STATE.sem);
+  const totalCredits = rows.reduce((a,r)=>a+r.credits,0);
+  const sgpa = rows.length ? (rows.reduce((a,r)=>a + r.credits*r.points,0)/totalCredits).toFixed(2) : "—";
+
+  const semButtons = ["Sem 4","Sem 5"].map(s=>
+    `<button class="sem-btn${STATE.sem===s?" active":""}" data-sem="${s}">${s}</button>`).join("");
+
+  const tableRows = rows.map(r=>{
+    const gc = gradeColor(r.grade);
+    return `
+      <tr>
+        <td style="color:var(--text-faint);font-family:var(--font-mono);font-size:12.5px">${escapeHtml(r.code)}</td>
+        <td>${escapeHtml(r.subject)}</td>
+        <td>${r.credits}</td>
+        <td><span class="grade-badge" style="background:${gc.bg};color:${gc.color}">${r.grade}</span></td>
+      </tr>`;
+  }).join("");
+
+  return `
+    ${pageHead("Academic results", "Results", "Semester-wise grades pulled straight from the academic records system.")}
+    <div class="card">
+      <div class="student-strip">
+        <div class="avatar" style="width:54px;height:54px;font-size:18px">AR</div>
+        <div>
+          <h2>${escapeHtml(student.name)}</h2>
+          <div class="meta">${escapeHtml(student.roll)} · ${escapeHtml(student.branch)} · ${escapeHtml(student.year)} · Sec ${escapeHtml(student.section)}</div>
+        </div>
+        <div class="sem-select">${semButtons}</div>
+      </div>
+      <table>
+        <thead><tr><th>Code</th><th>Subject</th><th>Credits</th><th>Grade</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div class="stat-row">
+        <div class="stat-box"><b>${sgpa}</b><span>SGPA — ${STATE.sem}</span></div>
+        <div class="stat-box"><b>${totalCredits}</b><span>Total credits</span></div>
+        <div class="stat-box"><b>${rows.length}</b><span>Subjects</span></div>
+      </div>
+    </div>`;
+}
+
+/* ---------------- ATTENDANCE PAGE ---------------- */
+function renderAttendance(){
+  const rows = DataService.getAttendance();
+  const overall = Math.round(rows.reduce((a,r)=>a+r.pct,0)/rows.length);
+  const overallStatus = statusFor(overall);
+
+  const attRows = rows.map(r=>{
+    const st = statusFor(r.pct);
+    return `
+      <div class="att-row">
+        <div>${escapeHtml(r.subject)}</div>
+        <div class="att-track"><div style="width:${r.pct}%;background:${st.bar}"></div></div>
+        <div style="text-align:right;font-weight:700">${r.pct}%</div>
+        <div class="att-status" style="text-align:right">
+          <span class="status-badge" style="background:${st.bg};color:${st.color}">${st.label}</span>
+        </div>
+      </div>`;
+  }).join("");
+
+  return `
+    ${pageHead("Student Services Agent", "Attendance report", "Live subject-wise attendance with an eligibility check against the 75% requirement.")}
+    <div class="card">
+      <div class="att-overview">
+        <div class="donut" style="background:conic-gradient(${overallStatus.bar} ${overall*3.6}deg, var(--surface-2) 0deg)">
+          <div class="hole"><b>${overall}%</b><span>Overall</span></div>
+        </div>
+        <div>
+          <div class="status-badge" style="background:${overallStatus.bg};color:${overallStatus.color}">${overallStatus.label}</div>
+          <p style="color:var(--text-dim);font-size:13.5px;margin-top:10px;max-width:32ch">
+            ${overall >= 75
+              ? "You're comfortably above the 75% exam eligibility threshold."
+              : "You're below the 75% exam eligibility threshold — the Student Services Agent can help you apply for condonation."}
+          </p>
+        </div>
+      </div>
+      <div class="att-list">${attRows}</div>
+    </div>`;
+}
+
+/* ---------------- CAMPUS MAP PAGE ---------------- */
+function renderMap(){
+  const legend = Object.entries(PLACE_STYLE).map(([k,v])=>
+    `<div class="item"><span class="legend-dot" style="background:${v.fill}"></span>${escapeHtml(v.label)}</div>`).join("");
+
+  const pins = CAMPUS_PLACES.map(p=>{
+    const style = PLACE_STYLE[p.type];
+    const isSel = STATE.mapSelected && STATE.mapSelected.id === p.id;
+    const r = p.type === "building" ? 12 : 9;
+    const labelY = p.y + (p.type === "building" ? 26 : 22);
+    return `
+      <g class="pin${isSel?" selected":""}" data-place="${p.id}" tabindex="0">
+        <circle class="ring" cx="${p.x}" cy="${p.y}" r="19" fill="${style.fill}" opacity="0.18" />
+        <circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${style.fill}" stroke="#fff" stroke-width="2.5" />
+        <text x="${p.x}" y="${labelY}" text-anchor="middle">${escapeHtml(p.name)}</text>
+      </g>`;
+  }).join("");
+
+  const infoHtml = STATE.mapSelected
+    ? `
+      <div class="status-badge" style="background:${PLACE_STYLE[STATE.mapSelected.type].fill}22;color:${PLACE_STYLE[STATE.mapSelected.type].fill};margin-bottom:10px;display:inline-block">
+        ${escapeHtml(PLACE_STYLE[STATE.mapSelected.type].label)}
+      </div>
+      <h4>${escapeHtml(STATE.mapSelected.name)}</h4>
+      <p>${escapeHtml(STATE.mapSelected.info)}</p>`
+    : `<p class="placeholder">Tap any marker on the map to see what's there — academic blocks, canteens, and spots to relax between classes.</p>`;
+
+  return `
+    ${pageHead("Vasavi College of Engineering", "Campus map", "A stylised layout of the Ibrahimbagh campus — academic blocks, food spots and entertainment/relax areas. Tap a marker for details.")}
+    <div class="map-legend">${legend}</div>
+    <div class="map-shell">
+      <div class="map-svg-wrap">
+        <svg viewBox="0 0 620 500" width="100%" role="img" aria-label="Vasavi College of Engineering campus map">
+          <rect x="0" y="0" width="620" height="500" fill="transparent" />
+          <path d="M60,120 H560 M300,60 V470 M120,210 L470,150 M130,340 L480,420" stroke="#D7E9DC" stroke-width="10" fill="none" stroke-linecap="round" />
+          ${pins}
+        </svg>
+      </div>
+      <div class="map-info" id="map-info">${infoHtml}</div>
+    </div>`;
+}
+
+/* ---------------- DATABASE PAGE ---------------- */
+function renderDatabase(){
+  const code = `// 1. npm install @supabase/supabase-js
+import { createClient } from '@supabase/supabase-js'
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+const DataService = {
+  async getAttendance(rollNo) {
+    const { data, error } = await supabase
+      .from('attendance')
+      .select('subject, pct')
+      .eq('roll', rollNo)
+    if (error) throw error
+    return data
+  },
+  // getResults(), getStudent() follow the same pattern
+}`;
+  return `
+    ${pageHead("Under the hood", "Connect a database", "Every screen in this app reads from one small DataService object with mock data. Point it at a real database and nothing else in the app has to change.")}
+    <div class="db-panel">
+      <div class="card">
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">How the data layer works</h3>
+        <div class="db-steps">
+          <div class="db-step"><div class="n">1</div><p><b>One file, one job.</b> Every page calls <code>DataService.getResults()</code>, <code>getAttendance()</code>, etc. — never a raw fetch or mock array directly.</p></div>
+          <div class="db-step"><div class="n">2</div><p><b>Same shape in, same shape out.</b> As long as your API returns the same object shape, the UI doesn't need edits.</p></div>
+          <div class="db-step"><div class="n">3</div><p><b>Pick a backend.</b> Supabase or Firebase get you a live database in minutes with no server to manage — good fit for a hackathon timeline.</p></div>
+          <div class="db-step"><div class="n">4</div><p><b>Make the functions async.</b> Add <code>await</code> at each call site.</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="font-family:var(--font-display);font-size:16px;margin:0 0 14px">Example: swapping in Supabase</h3>
+        <pre class="code">${escapeHtml(code)}</pre>
+      </div>
+    </div>`;
+}
+
+/* ---------------- SHELL: NAV + FOOTER ---------------- */
+const TABS = [
+  ["orchestrator","Orchestrator"],
+  ["agents","Agents"],
+  ["results","Results"],
+  ["attendance","Attendance"],
+  ["map","Campus Map"],
+  ["database","Connect a Database"],
+];
+const PAGE_RENDERERS = {
+  orchestrator: renderOrchestrator,
+  agents: renderAgents,
+  results: renderResults,
+  attendance: renderAttendance,
+  map: renderMap,
+  database: renderDatabase,
+};
+
+function renderNav(){
+  const tabs = TABS.map(([id,label])=>
+    `<button class="tab-btn${STATE.tab===id?" active":""}" data-tab="${id}">${escapeHtml(label)}</button>`).join("");
+  return `
+    <header class="nav">
+      <div class="nav-inner">
+        <div class="brand"><span class="mark">V</span>Vasavi Connect</div>
+        <nav class="tabs">${tabs}</nav>
+        <div class="nav-user">
+          <span>Ananya Rao · CSE (AI&amp;ML)</span>
+          <div class="avatar">AR</div>
+        </div>
+      </div>
+    </header>`;
+}
+
+/* ---------------- RENDER LOOP ---------------- */
+function render(){
+  const root = document.getElementById('root');
+  root.innerHTML = `
+    ${renderNav()}
+    <main class="wrap">${PAGE_RENDERERS[STATE.tab]()}</main>
+    <footer>Vasavi Connect · built for the campus AI hackathon · agent routing runs client-side for this demo</footer>`;
+  attachHandlers();
+}
+
+/* ---------------- EVENT DELEGATION ---------------- */
+function attachHandlers(){
+  const root = document.getElementById('root');
+
+  // Nav tabs
+  root.querySelectorAll('[data-tab]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ STATE.tab = btn.getAttribute('data-tab'); render(); });
+  });
+
+  // Orchestrator
+  const textarea = document.getElementById('orch-textarea');
+  if (textarea){
+    textarea.addEventListener('input', ()=>{ STATE.orchQuery = textarea.value; });
+  }
+  const runBtn = document.getElementById('orch-run-btn');
+  if (runBtn){
+    runBtn.addEventListener('click', ()=> runOrchestrator());
+  }
+  root.querySelectorAll('[data-example]').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      const idx = Number(chip.getAttribute('data-example'));
+      runOrchestrator(EXAMPLES[idx]);
+    });
+  });
+
+  // Results semester switch
+  root.querySelectorAll('[data-sem]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ STATE.sem = btn.getAttribute('data-sem'); render(); });
+  });
+
+  // Campus map pins
+  root.querySelectorAll('[data-place]').forEach(pin=>{
+    const select = ()=>{
+      const id = pin.getAttribute('data-place');
+      STATE.mapSelected = CAMPUS_PLACES.find(p=>p.id===id) || null;
+      render();
+    };
+    pin.addEventListener('click', select);
+    pin.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') select(); });
+  });
+}
+
+/* ---------------- BOOT ---------------- */
+render();
+</script>
+</body>
+</html>
