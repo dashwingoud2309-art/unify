@@ -332,6 +332,48 @@
   .related-card span{font-size:11.5px; color:var(--text-faint);}
   .detail-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;}
 
+  /* ---------- AUTH / LOGIN ---------- */
+  .auth-shell{
+    min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
+    background:
+      radial-gradient(900px 480px at 10% -10%, rgba(108,92,231,0.10), transparent 60%),
+      radial-gradient(800px 420px at 95% 100%, rgba(31,191,168,0.10), transparent 55%),
+      var(--bg);
+  }
+  .auth-card{
+    width:100%; max-width:380px; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius-lg); padding:36px 32px; box-shadow:0 24px 60px -30px rgba(33,31,53,0.25);
+  }
+  .auth-brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:19px; margin-bottom:6px;}
+  .auth-brand .mark{width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg, var(--primary), var(--teal)); display:grid; place-items:center; color:#fff; flex:none;}
+  .auth-brand .mark svg{width:20px; height:20px;}
+  .auth-sub{color:var(--text-dim); font-size:13.5px; margin:0 0 26px;}
+  .auth-field{margin-bottom:16px;}
+  .auth-field label{display:block; font-size:12.5px; font-weight:600; color:var(--text-dim); margin-bottom:6px;}
+  .auth-field input{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-md);
+    padding:12px 14px; font-family:var(--font-body); font-size:14px; color:var(--text);
+  }
+  .auth-field input:focus{border-color:var(--primary);}
+  .auth-error{
+    background:var(--rose-dim); color:var(--rose); font-size:12.5px; font-weight:600; padding:10px 14px;
+    border-radius:var(--radius-sm); margin-bottom:16px;
+  }
+  .auth-foot{margin-top:18px; text-align:center; font-size:12px; color:var(--text-faint);}
+  .auth-hint{margin-top:10px; text-align:center; font-size:11.5px; color:var(--text-faint);}
+
+  /* ---------- PROFILE ---------- */
+  .profile-hero{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  .profile-hero .avatar{width:72px; height:72px; font-size:24px;}
+  .profile-hero h2{font-family:var(--font-display); font-size:22px; margin:0 0 4px;}
+  .profile-hero .meta{color:var(--text-dim); font-size:13.5px;}
+  .profile-fields{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:26px;}
+  @media (max-width:640px){ .profile-fields{grid-template-columns:1fr;} }
+  .profile-field{background:var(--surface-2); border-radius:var(--radius-md); padding:14px 16px;}
+  .profile-field span{display:block; font-size:11.5px; color:var(--text-faint); margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em;}
+  .profile-field b{font-size:14.5px;}
+  .btn-danger{background:var(--rose-dim); color:var(--rose);}
+
   footer{border-top:1px solid var(--line); padding:32px 0; margin-top:20px; color:var(--text-faint); font-size:13px; text-align:center;}
 </style>
 </head>
@@ -591,6 +633,10 @@ const PLACE_STYLE = {
 
 /* ---------------- APP STATE ---------------- */
 const STATE = {
+  isLoggedIn: false,
+  loginRoll: "",
+  loginPassword: "",
+  loginError: "",
   tab: "home",
   sem: "Sem 5",
   orchQuery: "",
@@ -741,6 +787,66 @@ function statusFor(pct){
 }
 function money(n){
   return "₹" + Math.round(n).toLocaleString("en-IN");
+}
+
+/* ---------------- LOGIN PAGE ---------------- */
+function renderLogin(){
+  return `
+    <div class="auth-shell">
+      <div class="auth-card">
+        <div class="auth-brand"><span class="mark">${LOGO_SVG}</span>Unify Connect</div>
+        <p class="auth-sub">Sign in with your student credentials to continue.</p>
+        ${STATE.loginError ? `<div class="auth-error">${escapeHtml(STATE.loginError)}</div>` : ""}
+        <div id="login-form">
+          <div class="auth-field">
+            <label for="login-roll">Roll number</label>
+            <input id="login-roll" type="text" autocomplete="username" placeholder="20B91A0512" value="${escapeHtml(STATE.loginRoll)}" />
+          </div>
+          <div class="auth-field">
+            <label for="login-password">Password</label>
+            <input id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" value="${escapeHtml(STATE.loginPassword)}" />
+          </div>
+          <button type="button" id="login-submit-btn" class="btn btn-primary btn-block">Log in →</button>
+        </div>
+        <p class="auth-hint">Demo login — any roll number &amp; password will work.</p>
+        <p class="auth-foot">Vasavi College of Engineering · Ibrahimbagh, Hyderabad</p>
+      </div>
+    </div>`;
+}
+
+/* ---------------- PROFILE PAGE ---------------- */
+function renderProfile(){
+  const student = DataService.getStudent();
+  const attendance = DataService.getAttendance();
+  const overall = Math.round(attendance.reduce((a,r)=>a+r.pct,0)/attendance.length);
+  const results = DataService.getResults(STATE.sem);
+  const totalCredits = results.reduce((a,r)=>a+r.credits,0);
+  const sgpa = results.length ? (results.reduce((a,r)=>a + r.credits*r.points,0)/totalCredits).toFixed(2) : "—";
+
+  return `
+    ${pageHead("Account", "Your profile", "Details on file with the college, plus a quick snapshot of where things stand.")}
+    <div class="card">
+      <div class="profile-hero">
+        <div class="avatar">AR</div>
+        <div>
+          <h2>${escapeHtml(student.name)}</h2>
+          <div class="meta">${escapeHtml(student.roll)} · ${escapeHtml(student.branch)} · ${escapeHtml(student.year)} · Sec ${escapeHtml(student.section)}</div>
+        </div>
+      </div>
+      <div class="profile-fields">
+        <div class="profile-field"><span>Roll number</span><b>${escapeHtml(student.roll)}</b></div>
+        <div class="profile-field"><span>Branch</span><b>${escapeHtml(student.branch)}</b></div>
+        <div class="profile-field"><span>Year</span><b>${escapeHtml(student.year)}</b></div>
+        <div class="profile-field"><span>Section</span><b>${escapeHtml(student.section)}</b></div>
+        <div class="profile-field"><span>Current SGPA</span><b>${escapeHtml(String(sgpa))} — ${escapeHtml(STATE.sem)}</b></div>
+        <div class="profile-field"><span>Overall attendance</span><b>${overall}%</b></div>
+      </div>
+      <div style="margin-top:26px; display:flex; gap:10px; flex-wrap:wrap">
+        <button class="btn btn-ghost" data-tab="attendance">View attendance →</button>
+        <button class="btn btn-ghost" data-tab="results">View results →</button>
+        <button class="btn btn-danger" id="logout-btn">Log out</button>
+      </div>
+    </div>`;
 }
 
 /* ---------------- PAGE HEAD ---------------- */
@@ -1375,6 +1481,7 @@ const TABS = [
   ["results","Results","📊"],
   ["attendance","Attendance","📅"],
   ["map","Campus Map","🗺️"],
+  ["profile","Profile","👤"],
   ["database","Connect a Database","🗄️"],
 ];
 const PAGE_RENDERERS = {
@@ -1385,6 +1492,7 @@ const PAGE_RENDERERS = {
   results: renderResults,
   attendance: renderAttendance,
   map: renderMap,
+  profile: renderProfile,
   database: renderDatabase,
 };
 
@@ -1411,10 +1519,10 @@ function renderNav(){
           <button class="hamburger" id="sidebar-toggle" aria-label="Open menu">${ICON_MENU}</button>
           <div class="brand"><span class="mark">${LOGO_SVG}</span>Unify Connect</div>
         </div>
-        <div class="nav-user">
+        <button class="nav-user" data-tab="profile" style="background:none;border:none;cursor:pointer;padding:0">
           <span>Ashwin · CSE (AI&amp;ML)</span>
           <div class="avatar">AR</div>
-        </div>
+        </button>
       </div>
     </header>`;
 }
@@ -1439,12 +1547,44 @@ function renderSidebar(){
 /* ---------------- RENDER LOOP ---------------- */
 function render(){
   const root = document.getElementById('root');
+  if (!STATE.isLoggedIn){
+    root.innerHTML = renderLogin();
+    attachAuthHandlers();
+    return;
+  }
   root.innerHTML = `
     ${renderNav()}
     ${renderSidebar()}
     <main class="wrap">${PAGE_RENDERERS[STATE.tab]()}</main>
     <footer> Unify Connect </footer>`;
   attachHandlers();
+}
+
+/* ---------------- AUTH EVENT HANDLERS ---------------- */
+function attemptLogin(){
+  if (!STATE.loginRoll.trim() || !STATE.loginPassword.trim()){
+    STATE.loginError = "Enter both your roll number and password.";
+    render();
+    return;
+  }
+  STATE.loginError = "";
+  STATE.isLoggedIn = true;
+  STATE.tab = "home";
+  render();
+}
+function attachAuthHandlers(){
+  const rollInput = document.getElementById('login-roll');
+  const passInput = document.getElementById('login-password');
+  if (rollInput){
+    rollInput.addEventListener('input', ()=>{ STATE.loginRoll = rollInput.value; });
+    rollInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') attemptLogin(); });
+  }
+  if (passInput){
+    passInput.addEventListener('input', ()=>{ STATE.loginPassword = passInput.value; });
+    passInput.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') attemptLogin(); });
+  }
+  const submitBtn = document.getElementById('login-submit-btn');
+  if (submitBtn){ submitBtn.addEventListener('click', ()=> attemptLogin()); }
 }
 
 /* ---------------- EVENT DELEGATION ---------------- */
@@ -1533,6 +1673,20 @@ function attachHandlers(){
   root.querySelectorAll('[data-sem]').forEach(btn=>{
     btn.addEventListener('click', ()=>{ STATE.sem = btn.getAttribute('data-sem'); render(); });
   });
+
+  // Profile — logout
+  const logoutBtn = document.getElementById('logout-btn');
+  if (logoutBtn){
+    logoutBtn.addEventListener('click', ()=>{
+      STATE.isLoggedIn = false;
+      STATE.loginRoll = "";
+      STATE.loginPassword = "";
+      STATE.loginError = "";
+      STATE.tab = "home";
+      STATE.sidebarOpen = false;
+      render();
+    });
+  }
 
   // Campus map pins
   root.querySelectorAll('[data-place]').forEach(pin=>{
