@@ -8,10 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- No external JS dependencies — plain HTML/CSS/JS only, so this page
-     never depends on a CDN being reachable. If the Google Fonts request
-     above fails or is blocked, the page still renders fine with system fonts. -->
-
 <style>
   :root{
     --bg:#F7F7FB;
@@ -61,7 +57,6 @@
   :focus-visible{outline:2px solid var(--primary); outline-offset:2px; border-radius:6px;}
   .wrap{max-width:var(--max); margin:0 auto; padding:0 24px;}
 
-  /* ---------- NAV ---------- */
   header.nav{
     position:sticky; top:0; z-index:50;
     background:rgba(247,247,251,0.85); backdrop-filter:blur(10px);
@@ -86,7 +81,6 @@
   .avatar{width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--coral), var(--amber)); display:grid; place-items:center; color:#fff; font-weight:700; font-size:12px;}
   @media (max-width:900px){ .nav-user span{display:none;} }
 
-  /* ---------- SIDEBAR ---------- */
   .sidebar-overlay{
     position:fixed; inset:0; background:rgba(33,31,53,0.28); z-index:59;
     opacity:0; pointer-events:none; transition:opacity .2s;
@@ -126,7 +120,6 @@
   .grid-2{display:grid; grid-template-columns:1.1fr 0.9fr; gap:24px;}
   @media (max-width:940px){ .grid-2{grid-template-columns:1fr;} }
 
-  /* ---------- ORCHESTRATOR PAGE ---------- */
   .orch-input-row{display:flex; gap:10px; margin-bottom:14px;}
   .orch-input-row textarea{
     flex:1; resize:vertical; min-height:64px; background:var(--surface-2);
@@ -159,7 +152,6 @@
   .mini-agent .t b{display:block; font-size:13.5px;}
   .mini-agent .t span{color:var(--text-faint); font-size:12px;}
 
-  /* ---------- AGENT GRID PAGE ---------- */
   .agent-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px;}
   @media (max-width:900px){ .agent-grid{grid-template-columns:repeat(2,1fr);} }
   @media (max-width:600px){ .agent-grid{grid-template-columns:1fr;} }
@@ -171,7 +163,6 @@
   .agent-card .tags{display:flex; flex-wrap:wrap; gap:6px;}
   .tagpill{font-size:11px; padding:4px 9px; border-radius:100px; background:var(--surface-2); color:var(--text-faint); border:1px solid var(--line);}
 
-  /* ---------- RESULTS PAGE ---------- */
   .student-strip{display:flex; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap;}
   .student-strip .avatar{width:54px; height:54px; font-size:18px;}
   .student-strip h2{font-family:var(--font-display); font-size:19px; margin:0;}
@@ -190,7 +181,6 @@
   .stat-box b{display:block; font-family:var(--font-display); font-size:24px;}
   .stat-box span{font-size:12px; color:var(--text-faint);}
 
-  /* ---------- ATTENDANCE PAGE ---------- */
   .att-overview{display:flex; align-items:center; gap:26px; flex-wrap:wrap;}
   .donut{width:140px; height:140px; border-radius:50%; display:grid; place-items:center; flex:none;}
   .donut .hole{width:104px; height:104px; border-radius:50%; background:var(--surface); display:grid; place-items:center; text-align:center;}
@@ -203,7 +193,6 @@
   .att-track > div{height:100%; border-radius:100px;}
   .status-badge{font-size:11px; padding:4px 10px; border-radius:100px; font-weight:700; text-align:center;}
 
-  /* ---------- MAP PAGE ---------- */
   .map-shell{display:grid; grid-template-columns:1fr 300px; gap:20px;}
   @media (max-width:900px){ .map-shell{grid-template-columns:1fr;} }
   .map-legend{display:flex; gap:16px; flex-wrap:wrap; margin-bottom:16px; font-size:12.5px; color:var(--text-dim);}
@@ -219,7 +208,6 @@
   .pin:hover circle.ring, .pin.selected circle.ring{opacity:1;}
   .pin text{font-family:var(--font-body); font-size:9.5px; font-weight:600; fill:var(--text);}
 
-  /* ---------- DB PANEL ---------- */
   .db-panel{display:grid; grid-template-columns:1fr 1fr; gap:24px;}
   @media (max-width:860px){ .db-panel{grid-template-columns:1fr;} }
   pre.code{background:#221F35; color:#E9E7FA; border-radius:var(--radius-md); padding:18px; font-family:var(--font-mono); font-size:12.5px; overflow-x:auto; line-height:1.6;}
@@ -229,7 +217,6 @@
   .db-step p{margin:0; font-size:13.5px; color:var(--text-dim);}
   .db-step b{color:var(--text);}
 
-  /* ---------- HOMEPAGE ---------- */
   .home-search{
     display:flex; align-items:center; gap:10px; background:var(--surface); border:1px solid var(--line-strong);
     border-radius:100px; padding:6px 8px 6px 20px; box-shadow:0 12px 28px -20px rgba(33,31,53,0.25);
@@ -267,7 +254,6 @@
   .quick-agent .ic{width:32px; height:32px; border-radius:9px; display:grid; place-items:center; font-size:15px;}
   .quick-agent b{font-size:12.5px;}
 
-  /* ---------- MOCK RESPONSE DETAIL CARD ---------- */
   .mock-card{margin-top:14px; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); overflow:hidden;}
   .mock-card .mc-head{padding:10px 16px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); background:var(--surface-2); border-bottom:1px solid var(--line);}
   .mock-card .mc-row{display:flex; justify-content:space-between; gap:14px; padding:10px 16px; font-size:13px; border-bottom:1px solid var(--line);}
@@ -275,7 +261,6 @@
   .mock-card .mc-row .k{color:var(--text-faint);}
   .mock-card .mc-row .v{color:var(--text); font-weight:600; text-align:right;}
 
-  /* ---------- ORCHESTRATOR RESULT DETAIL PAGE ---------- */
   .breadcrumb{display:flex; align-items:center; flex-wrap:wrap; gap:6px; font-size:13px; color:var(--text-faint); margin-bottom:16px;}
   .breadcrumb b{color:var(--text); font-weight:600;}
   .breadcrumb .sep{color:var(--line-strong);}
@@ -332,7 +317,6 @@
   .related-card span{font-size:11.5px; color:var(--text-faint);}
   .detail-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:6px;}
 
-  /* ---------- AUTH / LOGIN ---------- */
   .auth-shell{
     min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;
     background:
@@ -341,7 +325,7 @@
       var(--bg);
   }
   .auth-card{
-    width:100%; max-width:380px; background:var(--surface); border:1px solid var(--line);
+    width:100%; max-width:400px; background:var(--surface); border:1px solid var(--line);
     border-radius:var(--radius-lg); padding:36px 32px; box-shadow:0 24px 60px -30px rgba(33,31,53,0.25);
   }
   .auth-brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:19px; margin-bottom:6px;}
@@ -360,9 +344,15 @@
     border-radius:var(--radius-sm); margin-bottom:16px;
   }
   .auth-foot{margin-top:18px; text-align:center; font-size:12px; color:var(--text-faint);}
-  .auth-hint{margin-top:10px; text-align:center; font-size:11.5px; color:var(--text-faint);}
+  .auth-hint{margin-top:14px; text-align:left; font-size:11.5px; color:var(--text-faint); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-md); padding:12px 14px;}
+  .auth-hint b{display:block; color:var(--text-dim); font-size:11.5px; margin-bottom:6px;}
+  .auth-hint .cred-row{display:flex; justify-content:space-between; gap:10px; padding:3px 0; font-family:var(--font-mono);}
+  .auth-hint .cred-row span:first-child{color:var(--text);}
+  .auth-hint .cred-row button{
+    font-family:var(--font-mono); font-size:10.5px; border:1px solid var(--line-strong); background:var(--surface);
+    color:var(--primary); border-radius:6px; padding:2px 7px; cursor:pointer;
+  }
 
-  /* ---------- PROFILE ---------- */
   .profile-hero{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
   .profile-hero .avatar{width:72px; height:72px; font-size:24px;}
   .profile-hero h2{font-family:var(--font-display); font-size:22px; margin:0 0 4px;}
@@ -383,24 +373,19 @@
 <script>
 /* =========================================================================
    Unify CONNECT — plain HTML/CSS/JS, zero external script dependencies.
-   Everything below is one file: data, the orchestrator classifier, and a
-   tiny render loop that swaps innerHTML per tab. No React, no build step,
-   no CDN — so it can never fail to load because of a blocked/slow CDN.
    ========================================================================= */
 
-/* ---------------- DATA LAYER ----------------
-   Swap this for real API/DB calls when you're ready. Every function below
-   returns data synchronously from mock arrays. To connect a real database
-   (Supabase/Firebase/your own REST API), turn a function into an `async`
-   function that fetches and returns the same shape — see the
-   "Connect a Database" tab and README.md for a worked example. */
-const DataService = {
-  getStudent(){
-    return { name:" Ashwin", roll:"20B91A0512", branch:"CSE (AI & ML)", year:"3rd Year", section:"B" };
-  },
-  getResults(semester){
-    const data = {
-      "Sem 5": [
+/* ---------------- STUDENT DIRECTORY (predownloaded / seed data) ----------------
+   Each entry is a full mock student record keyed by roll number + password.
+   Login checks against this list; whichever record matches becomes the
+   "current student" and every page (name, avatar, results, attendance)
+   renders using that record instead of one hardcoded student. */
+const STUDENTS = [
+  {
+    roll:"20B91A0512", password:"ashwin123", name:"Ashwin Rao", initials:"AR",
+    branch:"CSE (AI & ML)", year:"3rd Year", section:"B",
+    results:{
+      "Sem 5":[
         {code:"AML501", subject:"Machine Learning", credits:4, grade:"A", points:9},
         {code:"CSE502", subject:"Operating Systems", credits:4, grade:"A+", points:10},
         {code:"AML503", subject:"Deep Learning", credits:3, grade:"B+", points:8},
@@ -408,25 +393,127 @@ const DataService = {
         {code:"HSS505", subject:"Engineering Economics", credits:2, grade:"A+", points:10},
         {code:"AML506", subject:"ML Lab", credits:2, grade:"A+", points:10},
       ],
-      "Sem 4": [
+      "Sem 4":[
         {code:"CSE401", subject:"Data Structures", credits:4, grade:"A", points:9},
         {code:"CSE402", subject:"DBMS", credits:4, grade:"A+", points:10},
         {code:"CSE403", subject:"Discrete Mathematics", credits:3, grade:"B", points:7},
         {code:"CSE404", subject:"OOP with Java", credits:3, grade:"A", points:9},
         {code:"HSS405", subject:"Professional Ethics", credits:2, grade:"A+", points:10},
       ],
-    };
-    return data[semester] || [];
-  },
-  getAttendance(){
-    return [
+    },
+    attendance:[
       {subject:"Machine Learning", pct:92},
       {subject:"Operating Systems", pct:88},
       {subject:"Deep Learning", pct:74},
       {subject:"Computer Networks", pct:81},
       {subject:"Engineering Economics", pct:69},
       {subject:"ML Lab", pct:96},
-    ];
+    ],
+  },
+  {
+    roll:"20B91A0534", password:"priya456", name:"Priya Menon", initials:"PM",
+    branch:"CSE (AI & ML)", year:"3rd Year", section:"A",
+    results:{
+      "Sem 5":[
+        {code:"AML501", subject:"Machine Learning", credits:4, grade:"A+", points:10},
+        {code:"CSE502", subject:"Operating Systems", credits:4, grade:"A", points:9},
+        {code:"AML503", subject:"Deep Learning", credits:3, grade:"A+", points:10},
+        {code:"CSE504", subject:"Computer Networks", credits:3, grade:"A+", points:10},
+        {code:"HSS505", subject:"Engineering Economics", credits:2, grade:"A", points:9},
+        {code:"AML506", subject:"ML Lab", credits:2, grade:"A+", points:10},
+      ],
+      "Sem 4":[
+        {code:"CSE401", subject:"Data Structures", credits:4, grade:"A+", points:10},
+        {code:"CSE402", subject:"DBMS", credits:4, grade:"A+", points:10},
+        {code:"CSE403", subject:"Discrete Mathematics", credits:3, grade:"A", points:9},
+        {code:"CSE404", subject:"OOP with Java", credits:3, grade:"A+", points:10},
+        {code:"HSS405", subject:"Professional Ethics", credits:2, grade:"A+", points:10},
+      ],
+    },
+    attendance:[
+      {subject:"Machine Learning", pct:95},
+      {subject:"Operating Systems", pct:90},
+      {subject:"Deep Learning", pct:87},
+      {subject:"Computer Networks", pct:93},
+      {subject:"Engineering Economics", pct:78},
+      {subject:"ML Lab", pct:98},
+    ],
+  },
+  {
+    roll:"20B91A0567", password:"rahul789", name:"Rahul Verma", initials:"RV",
+    branch:"CSE (AI & ML)", year:"3rd Year", section:"B",
+    results:{
+      "Sem 5":[
+        {code:"AML501", subject:"Machine Learning", credits:4, grade:"B+", points:8},
+        {code:"CSE502", subject:"Operating Systems", credits:4, grade:"B", points:7},
+        {code:"AML503", subject:"Deep Learning", credits:3, grade:"B", points:7},
+        {code:"CSE504", subject:"Computer Networks", credits:3, grade:"A", points:9},
+        {code:"HSS505", subject:"Engineering Economics", credits:2, grade:"B+", points:8},
+        {code:"AML506", subject:"ML Lab", credits:2, grade:"A", points:9},
+      ],
+      "Sem 4":[
+        {code:"CSE401", subject:"Data Structures", credits:4, grade:"B+", points:8},
+        {code:"CSE402", subject:"DBMS", credits:4, grade:"A", points:9},
+        {code:"CSE403", subject:"Discrete Mathematics", credits:3, grade:"B", points:7},
+        {code:"CSE404", subject:"OOP with Java", credits:3, grade:"B+", points:8},
+        {code:"HSS405", subject:"Professional Ethics", credits:2, grade:"A", points:9},
+      ],
+    },
+    attendance:[
+      {subject:"Machine Learning", pct:71},
+      {subject:"Operating Systems", pct:66},
+      {subject:"Deep Learning", pct:58},
+      {subject:"Computer Networks", pct:73},
+      {subject:"Engineering Economics", pct:80},
+      {subject:"ML Lab", pct:85},
+    ],
+  },
+  {
+    roll:"20B91A0589", password:"sneha321", name:"Sneha Iyer", initials:"SI",
+    branch:"CSE (AI & ML)", year:"3rd Year", section:"A",
+    results:{
+      "Sem 5":[
+        {code:"AML501", subject:"Machine Learning", credits:4, grade:"A", points:9},
+        {code:"CSE502", subject:"Operating Systems", credits:4, grade:"A", points:9},
+        {code:"AML503", subject:"Deep Learning", credits:3, grade:"A+", points:10},
+        {code:"CSE504", subject:"Computer Networks", credits:3, grade:"B+", points:8},
+        {code:"HSS505", subject:"Engineering Economics", credits:2, grade:"A", points:9},
+        {code:"AML506", subject:"ML Lab", credits:2, grade:"A+", points:10},
+      ],
+      "Sem 4":[
+        {code:"CSE401", subject:"Data Structures", credits:4, grade:"A", points:9},
+        {code:"CSE402", subject:"DBMS", credits:4, grade:"A", points:9},
+        {code:"CSE403", subject:"Discrete Mathematics", credits:3, grade:"A", points:9},
+        {code:"CSE404", subject:"OOP with Java", credits:3, grade:"A+", points:10},
+        {code:"HSS405", subject:"Professional Ethics", credits:2, grade:"A+", points:10},
+      ],
+    },
+    attendance:[
+      {subject:"Machine Learning", pct:89},
+      {subject:"Operating Systems", pct:84},
+      {subject:"Deep Learning", pct:91},
+      {subject:"Computer Networks", pct:77},
+      {subject:"Engineering Economics", pct:72},
+      {subject:"ML Lab", pct:94},
+    ],
+  },
+];
+
+/* ---------------- DATA LAYER ----------------
+   Swap this for real API/DB calls when you're ready. Functions below read
+   from the STUDENTS array based on the logged-in student (STATE.currentStudent). */
+const DataService = {
+  getStudent(){
+    const s = STATE.currentStudent || STUDENTS[0];
+    return { name:s.name, roll:s.roll, branch:s.branch, year:s.year, section:s.section, initials:s.initials };
+  },
+  getResults(semester){
+    const s = STATE.currentStudent || STUDENTS[0];
+    return s.results[semester] || [];
+  },
+  getAttendance(){
+    const s = STATE.currentStudent || STUDENTS[0];
+    return s.attendance;
   },
   getAgents(){ return AGENTS; },
   getCampusPlaces(){ return CAMPUS_PLACES; },
@@ -490,11 +577,6 @@ function responseFor(agentId){
   return templates[agentId] || "Routed to the right specialist agent.";
 }
 
-/* ---------------- MOCK AGENT RESPONSE DATA ----------------
-   Small deterministic "backend" that fabricates a plausible structured
-   result per agent, so the demo shows a realistic payload rather than
-   just a sentence. Swap for a real agent response once the backend
-   is wired up — see the "Connect a Database" tab. */
 function seedFrom(str){
   let h = 0;
   for (let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
@@ -607,10 +689,6 @@ function renderMockCard(agentId, query){
     </div>`;
 }
 
-/* ---------------- CAMPUS MAP DATA ----------------
-   Stylised layout of Unify College of Engineering (Ibrahimbagh, Hyderabad).
-   Building names are real; positions are a simplified schematic for this
-   demo — swap in real coordinates from a surveyed campus map if you have one. */
 const CAMPUS_PLACES = [
   { id:"admin", name:"Admin Block", type:"building", x:230, y:120, info:"Admissions, accounts and the principal's office." },
   { id:"visv", name:"Civil Block", type:"building", x:120, y:210, info:"Core instructional block for Civil & Mechanical Engineering." },
@@ -634,6 +712,7 @@ const PLACE_STYLE = {
 /* ---------------- APP STATE ---------------- */
 const STATE = {
   isLoggedIn: false,
+  currentStudent: null,
   loginRoll: "",
   loginPassword: "",
   loginError: "",
@@ -656,7 +735,6 @@ const EXAMPLES = [
   "Draft a leave application to my HOD",
 ];
 
-/* ---------------- UPCOMING EVENTS (mock) ---------------- */
 const UPCOMING_EVENTS = [
   { name:"AI & ML Workshop", date:"9 Aug 2026", time:"10:00 AM", venue:"Auditorium", type:"Workshop", seats:"32 seats left" },
   { name:"Acumen Tech Fest", date:"22 Aug 2026", time:"9:00 AM", venue:"CSE Block Grounds", type:"Fest", seats:"Open to all" },
@@ -670,12 +748,6 @@ const EVENT_TYPE_STYLE = {
   Seminar:{bg:"var(--amber-dim)", color:"var(--amber)"},
 };
 
-/* ---------------- EXTRA MOCK DATA FOR DETAIL PAGES ----------------
-   Deeper mock payloads used only on the full-page orchestrator result
-   views (STATE.tab === "orch-detail"). Keyed by event name / item so the
-   two example flows in the prompt — the AI workshop registration and the
-   Arduino kits order — have real, specific detail behind them, while
-   every other agent still gets a reasonable generic detail page. */
 const EVENT_DETAILS = {
   "AI & ML Workshop": {
     banner:["#6C5CE7","#8B7CF0"],
@@ -751,7 +823,6 @@ const ARDUINO_ORDER = {
   itemName:"Arduino Uno R3 Starter Kit",
   sku:"ARD-UNO-R3-SK",
   department:"Robotics Lab · Mechanical & CSE (AI&ML) Dept.",
-  requestedBy:"Ashwin R · 20B91A0512",
   costCenter:"CC-ROBOLAB-04",
   unitPrice:1450,
   currency:"₹",
@@ -768,7 +839,6 @@ const ARDUINO_ORDER = {
   justification:"Requested to replace worn units in the Robotics Lab ahead of the upcoming project-based labs for 3rd-year Mechatronics and the Code Sprint Hackathon prep sessions.",
 };
 
-/* ---------------- SMALL HELPERS ---------------- */
 function escapeHtml(str){
   const d = document.createElement('div');
   d.textContent = str == null ? "" : String(str);
@@ -791,6 +861,12 @@ function money(n){
 
 /* ---------------- LOGIN PAGE ---------------- */
 function renderLogin(){
+  const credRows = STUDENTS.map(s=>`
+    <div class="cred-row">
+      <span>${escapeHtml(s.roll)} / ${escapeHtml(s.password)}</span>
+      <button type="button" data-fill-cred="${escapeHtml(s.roll)}|${escapeHtml(s.password)}">Use</button>
+    </div>`).join("");
+
   return `
     <div class="auth-shell">
       <div class="auth-card">
@@ -808,7 +884,10 @@ function renderLogin(){
           </div>
           <button type="button" id="login-submit-btn" class="btn btn-primary btn-block">Log in →</button>
         </div>
-        <p class="auth-hint">Demo login — any roll number &amp; password will work.</p>
+        <div class="auth-hint">
+          <b>Demo accounts (tap "Use" to autofill)</b>
+          ${credRows}
+        </div>
         <p class="auth-foot">Vasavi College of Engineering · Ibrahimbagh, Hyderabad</p>
       </div>
     </div>`;
@@ -827,7 +906,7 @@ function renderProfile(){
     ${pageHead("Account", "Your profile", "Details on file with the college, plus a quick snapshot of where things stand.")}
     <div class="card">
       <div class="profile-hero">
-        <div class="avatar">AR</div>
+        <div class="avatar">${escapeHtml(student.initials)}</div>
         <div>
           <h2>${escapeHtml(student.name)}</h2>
           <div class="meta">${escapeHtml(student.roll)} · ${escapeHtml(student.branch)} · ${escapeHtml(student.year)} · Sec ${escapeHtml(student.section)}</div>
@@ -849,7 +928,6 @@ function renderProfile(){
     </div>`;
 }
 
-/* ---------------- PAGE HEAD ---------------- */
 function pageHead(kicker, title, sub){
   return `
     <div class="page-head">
@@ -910,7 +988,7 @@ function renderHome(){
   }).join("");
 
   return `
-    ${pageHead("Home", `Welcome back Ashwin ${student.name.split(" ")[0]}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
+    ${pageHead("Home", `Welcome back, ${escapeHtml(student.name.split(" ")[0])}.`, "A quick look at where things stand, plus a search bar if you just want to ask for something.")}
     <div class="home-search">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input id="home-search-input" type="text" placeholder="Ask for anything — “remind me about my project deadline”" value="${escapeHtml(STATE.homeSearch)}" />
@@ -1043,7 +1121,7 @@ function renderResults(){
     ${pageHead("Academic results", "Results", "Semester-wise grades pulled straight from the academic records system.")}
     <div class="card">
       <div class="student-strip">
-        <div class="avatar" style="width:54px;height:54px;font-size:18px">AR</div>
+        <div class="avatar" style="width:54px;height:54px;font-size:18px">${escapeHtml(student.initials)}</div>
         <div>
           <h2>${escapeHtml(student.name)}</h2>
           <div class="meta">${escapeHtml(student.roll)} · ${escapeHtml(student.branch)} · ${escapeHtml(student.year)} · Sec ${escapeHtml(student.section)}</div>
@@ -1179,10 +1257,7 @@ const DataService = {
     </div>`;
 }
 
-/* ---------------- ORCHESTRATOR RESULT — FULL DETAIL PAGES ----------------
-   Each routed request now gets its own full page (not just the small
-   inline mock card). The page shown depends on which agent the
-   orchestrator picked; content is built from richer mock data above. */
+/* ---------------- ORCHESTRATOR RESULT — FULL DETAIL PAGES ---------------- */
 
 function findEventForQuery(query){
   const s = (query || "").toLowerCase();
@@ -1280,6 +1355,7 @@ function buildEventDetailPage(query){
 function buildProcurementDetailPage(query){
   const agent = AGENTS.find(a=>a.id==="procurement");
   const o = ARDUINO_ORDER;
+  const student = DataService.getStudent();
   const seed = seedFrom(query || o.itemName);
   const reqId = "PR-" + pad4(seed);
   const subtotal = o.unitPrice * o.qty;
@@ -1307,7 +1383,7 @@ function buildProcurementDetailPage(query){
     <div class="detail-banner" style="background:linear-gradient(135deg, #F5A623, #E5941A)">
       <div class="db-kicker">Procurement request · ${escapeHtml(reqId)}</div>
       <h2>${o.qty}× ${escapeHtml(o.itemName)}</h2>
-      <div class="db-meta">${escapeHtml(o.department)} · Requested by ${escapeHtml(o.requestedBy)}</div>
+      <div class="db-meta">${escapeHtml(o.department)} · Requested by ${escapeHtml(student.name)} · ${escapeHtml(student.roll)}</div>
       <div class="db-status">⏳ Pending HOD approval</div>
     </div>
     <div class="detail-grid">
@@ -1496,9 +1572,6 @@ const PAGE_RENDERERS = {
   database: renderDatabase,
 };
 
-/* Modern abstract logomark: a small hub-and-spoke network — reflects the
-   orchestrator routing a request out to specialist agents. Inline SVG so
-   it never depends on an external image loading. */
 const LOGO_SVG = `<svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
   <circle cx="16" cy="16" r="4.2" fill="#fff"/>
   <circle cx="6" cy="9" r="2.6" fill="#fff" fill-opacity="0.9"/>
@@ -1512,6 +1585,7 @@ const ICON_MENU = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>`;
 
 function renderNav(){
+  const student = DataService.getStudent();
   return `
     <header class="nav">
       <div class="nav-inner">
@@ -1520,8 +1594,8 @@ function renderNav(){
           <div class="brand"><span class="mark">${LOGO_SVG}</span>Unify Connect</div>
         </div>
         <button class="nav-user" data-tab="profile" style="background:none;border:none;cursor:pointer;padding:0">
-          <span>Ashwin · CSE (AI&amp;ML)</span>
-          <div class="avatar">AR</div>
+          <span>${escapeHtml(student.name.split(" ")[0])} · ${escapeHtml(student.branch)}</span>
+          <div class="avatar">${escapeHtml(student.initials)}</div>
         </button>
       </div>
     </header>`;
@@ -1562,12 +1636,21 @@ function render(){
 
 /* ---------------- AUTH EVENT HANDLERS ---------------- */
 function attemptLogin(){
-  if (!STATE.loginRoll.trim() || !STATE.loginPassword.trim()){
+  const roll = STATE.loginRoll.trim();
+  const pass = STATE.loginPassword.trim();
+  if (!roll || !pass){
     STATE.loginError = "Enter both your roll number and password.";
     render();
     return;
   }
+  const match = STUDENTS.find(s => s.roll.toLowerCase() === roll.toLowerCase() && s.password === pass);
+  if (!match){
+    STATE.loginError = "That roll number and password don't match our records. Try one of the demo accounts below.";
+    render();
+    return;
+  }
   STATE.loginError = "";
+  STATE.currentStudent = match;
   STATE.isLoggedIn = true;
   STATE.tab = "home";
   render();
@@ -1585,14 +1668,22 @@ function attachAuthHandlers(){
   }
   const submitBtn = document.getElementById('login-submit-btn');
   if (submitBtn){ submitBtn.addEventListener('click', ()=> attemptLogin()); }
+
+  document.querySelectorAll('[data-fill-cred]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const [roll, pass] = btn.getAttribute('data-fill-cred').split("|");
+      STATE.loginRoll = roll;
+      STATE.loginPassword = pass;
+      STATE.loginError = "";
+      render();
+    });
+  });
 }
 
 /* ---------------- EVENT DELEGATION ---------------- */
 function attachHandlers(){
   const root = document.getElementById('root');
 
-  // Sidebar / generic tab nav links (also used for "Back to Orchestrator"
-  // and the buttons at the bottom of every detail page)
   root.querySelectorAll('[data-tab]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       STATE.tab = btn.getAttribute('data-tab');
@@ -1601,7 +1692,6 @@ function attachHandlers(){
     });
   });
 
-  // Hamburger / sidebar open-close
   const toggle = document.getElementById('sidebar-toggle');
   if (toggle){ toggle.addEventListener('click', ()=>{ STATE.sidebarOpen = true; render(); }); }
   const closeBtn = document.getElementById('sidebar-close');
@@ -1609,7 +1699,6 @@ function attachHandlers(){
   const overlay = document.getElementById('sidebar-overlay');
   if (overlay){ overlay.addEventListener('click', ()=>{ STATE.sidebarOpen = false; render(); }); }
 
-  // Homepage search bar — routes straight into the orchestrator
   const homeInput = document.getElementById('home-search-input');
   if (homeInput){
     homeInput.addEventListener('input', ()=>{ STATE.homeSearch = homeInput.value; });
@@ -1618,7 +1707,6 @@ function attachHandlers(){
   const homeBtn = document.getElementById('home-search-btn');
   if (homeBtn){ homeBtn.addEventListener('click', ()=> runFromHome()); }
 
-  // Homepage quick-agent shortcuts
   root.querySelectorAll('[data-quick-agent]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const agentId = btn.getAttribute('data-quick-agent');
@@ -1630,8 +1718,6 @@ function attachHandlers(){
     });
   });
 
-  // Homepage "View details →" on an upcoming event row — jumps straight
-  // to that event's full detail page via the Event Agent.
   root.querySelectorAll('[data-view-event]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const evName = btn.getAttribute('data-view-event');
@@ -1641,8 +1727,6 @@ function attachHandlers(){
     });
   });
 
-  // "Open full <Agent> page →" button under an orchestrator result —
-  // opens the dedicated full-page view for that agent + query.
   root.querySelectorAll('[data-view-detail]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       const agentId = btn.getAttribute('data-view-detail');
@@ -1653,7 +1737,6 @@ function attachHandlers(){
     });
   });
 
-  // Orchestrator
   const textarea = document.getElementById('orch-textarea');
   if (textarea){
     textarea.addEventListener('input', ()=>{ STATE.orchQuery = textarea.value; });
@@ -1669,26 +1752,26 @@ function attachHandlers(){
     });
   });
 
-  // Results semester switch
   root.querySelectorAll('[data-sem]').forEach(btn=>{
     btn.addEventListener('click', ()=>{ STATE.sem = btn.getAttribute('data-sem'); render(); });
   });
 
-  // Profile — logout
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn){
     logoutBtn.addEventListener('click', ()=>{
       STATE.isLoggedIn = false;
+      STATE.currentStudent = null;
       STATE.loginRoll = "";
       STATE.loginPassword = "";
       STATE.loginError = "";
       STATE.tab = "home";
       STATE.sidebarOpen = false;
+      STATE.orchResult = null;
+      STATE.orchDetail = null;
       render();
     });
   }
 
-  // Campus map pins
   root.querySelectorAll('[data-place]').forEach(pin=>{
     const select = ()=>{
       const id = pin.getAttribute('data-place');
