@@ -365,10 +365,57 @@
   .btn-danger{background:var(--rose-dim); color:var(--rose);}
 
   footer{border-top:1px solid var(--line); padding:32px 0; margin-top:20px; color:var(--text-faint); font-size:13px; text-align:center;}
+
+  /* ---------- NOTIFICATIONS: bell, dropdown panel, toast pop-ups ---------- */
+  .notif-wrap{position:relative;}
+  .bell-btn{
+    position:relative; width:38px; height:38px; border-radius:10px; border:1px solid var(--line);
+    background:var(--surface); display:grid; place-items:center; cursor:pointer; font-size:16px; flex:none;
+    transition:border-color .15s;
+  }
+  .bell-btn:hover{border-color:var(--primary);}
+  .notif-badge{
+    position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 4px; border-radius:100px;
+    background:var(--rose); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .notif-panel{
+    position:absolute; top:46px; right:0; width:320px; max-height:420px; overflow-y:auto;
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+    box-shadow:0 20px 45px -20px rgba(33,31,53,0.32); z-index:70;
+  }
+  @media (max-width:480px){ .notif-panel{width:280px; right:-40px;} }
+  .notif-panel-head{display:flex; justify-content:space-between; align-items:center; padding:12px 14px; border-bottom:1px solid var(--line); font-size:13px; font-weight:700;}
+  .notif-panel-head button{background:none; border:none; color:var(--primary); font-size:11.5px; font-weight:600; cursor:pointer;}
+  .notif-item{display:flex; gap:10px; padding:12px 14px; border-bottom:1px solid var(--line); align-items:flex-start;}
+  .notif-item:last-child{border-bottom:none;}
+  .notif-item .ni-ic{width:30px; height:30px; border-radius:9px; background:var(--primary-dim); color:var(--primary); display:grid; place-items:center; font-size:14px; flex:none;}
+  .notif-item .ni-body{flex:1; font-size:12.5px; min-width:0;}
+  .notif-item .ni-body b{display:block; font-size:12.5px;}
+  .notif-item .ni-body span{color:var(--text-faint); font-size:11.5px; display:block; margin-top:2px; line-height:1.4;}
+  .notif-item .ni-side{flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:6px;}
+  .notif-item .ni-status{font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:100px; white-space:nowrap;}
+  .notif-item .ni-clear{background:none; border:none; color:var(--text-faint); font-size:10.5px; cursor:pointer; padding:0;}
+  .notif-item .ni-clear:hover{color:var(--rose);}
+  .notif-empty{padding:26px 14px; text-align:center; color:var(--text-faint); font-size:12.5px;}
+
+  #toast-container{position:fixed; bottom:20px; right:20px; z-index:200; display:flex; flex-direction:column; gap:10px; max-width:340px;}
+  @media (max-width:480px){ #toast-container{left:16px; right:16px; max-width:none;} }
+  .toast{
+    display:flex; gap:12px; align-items:flex-start; background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius-md); padding:14px 16px; box-shadow:0 20px 45px -20px rgba(33,31,53,0.35);
+    opacity:0; transform:translateY(10px); transition:opacity .25s, transform .25s;
+  }
+  .toast.show{opacity:1; transform:translateY(0);}
+  .toast .toast-ic{font-size:20px; flex:none;}
+  .toast .toast-body{flex:1; font-size:12.5px; min-width:0;}
+  .toast .toast-body b{display:block; font-size:13px; margin-bottom:3px;}
+  .toast .toast-body span{color:var(--text-dim); font-size:12px; line-height:1.45;}
+  .toast .toast-close{background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:12px; flex:none;}
 </style>
 </head>
 <body>
 <div id="root"></div>
+<div id="toast-container" aria-live="polite"></div>
 
 <script>
 /* =========================================================================
@@ -724,7 +771,96 @@ const STATE = {
   mapSelected: null,
   sidebarOpen: false,
   homeSearch: "",
+  notifications: [],
+  notifIdSeed: 1,
+  notifPanelOpen: false,
 };
+
+/* ---------------- NOTIFICATIONS (mock reminder engine) ----------------
+   A tiny in-memory "notification service": addNotification() files a
+   reminder (predefined title/body text built from the mock event/agent
+   data above), then after a short demo delay fires a real toast pop-up
+   via showToast() so the reminder is actually visible in this session. */
+function addNotification({icon, title, body}, delayMs){
+  const notif = { id: STATE.notifIdSeed++, icon: icon || "🔔", title, body, status:"Scheduled", seen:false };
+  STATE.notifications.unshift(notif);
+  render();
+  const delay = delayMs != null ? delayMs : 6000;
+  setTimeout(()=>{
+    notif.status = "Delivered";
+    notif.seen = false;
+    showToast(notif.icon, notif.title, notif.body);
+    render();
+  }, delay);
+}
+function showToast(icon, title, body){
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+  const el = document.createElement('div');
+  el.className = "toast";
+  el.innerHTML = `
+    <div class="toast-ic">${icon || "🔔"}</div>
+    <div class="toast-body"><b>${escapeHtml(title)}</b><span>${escapeHtml(body)}</span></div>
+    <button class="toast-close" aria-label="Dismiss">✕</button>`;
+  container.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  const remove = ()=>{ el.classList.remove('show'); setTimeout(()=> el.remove(), 250); };
+  el.querySelector('.toast-close').addEventListener('click', remove);
+  setTimeout(remove, 7000);
+}
+function toggleNotifPanel(){
+  STATE.notifPanelOpen = !STATE.notifPanelOpen;
+  if (STATE.notifPanelOpen){ STATE.notifications.forEach(n=> n.seen = true); }
+  render();
+}
+function clearNotification(id){
+  STATE.notifications = STATE.notifications.filter(n=> n.id !== id);
+  render();
+}
+function clearAllNotifications(){
+  STATE.notifications = [];
+  render();
+}
+function scheduleEventReminder(eventName){
+  const ev = UPCOMING_EVENTS.find(e=> e.name === eventName) || UPCOMING_EVENTS[0];
+  addNotification({
+    icon: "🎉",
+    title: `Reminder: ${ev.name}`,
+    body: `Starts ${ev.date} · ${ev.time} at ${ev.venue}. (Demo: this pop-up fires a few seconds after you set it, so you can see how a real reminder looks.)`,
+  });
+}
+function scheduleGenericReminder(agentId, query){
+  const agent = AGENTS.find(a=> a.id === agentId);
+  const d = mockDetailsFor(agentId, query || "reminder");
+  const bodyRow = d.rows.find(([k])=> /remind|deadline|event|channel/i.test(k)) || d.rows[0];
+  addNotification({
+    icon: agent ? agent.icon : "🔔",
+    title: d.title,
+    body: (bodyRow ? `${bodyRow[0]}: ${bodyRow[1]}. ` : "") + "This is a simulated reminder based on the mock request data above.",
+  });
+}
+function renderNotifPanel(){
+  const items = STATE.notifications.length ? STATE.notifications.map(n=>{
+    const delivered = n.status === "Delivered";
+    return `
+      <div class="notif-item">
+        <div class="ni-ic">${n.icon}</div>
+        <div class="ni-body"><b>${escapeHtml(n.title)}</b><span>${escapeHtml(n.body)}</span></div>
+        <div class="ni-side">
+          <span class="ni-status" style="background:${delivered?"var(--teal-dim)":"var(--amber-dim)"};color:${delivered?"var(--teal)":"var(--amber)"}">${n.status}</span>
+          <button class="ni-clear" data-clear-notif="${n.id}">Clear</button>
+        </div>
+      </div>`;
+  }).join("") : `<div class="notif-empty">No reminders yet — tap “🔔 Remind me” on an event, or ask the orchestrator to remind you about something.</div>`;
+  return `
+    <div class="notif-panel" id="notif-panel">
+      <div class="notif-panel-head">
+        <span>Reminders</span>
+        ${STATE.notifications.length ? `<button data-clear-all-notif>Clear all</button>` : ""}
+      </div>
+      ${items}
+    </div>`;
+}
 
 const EXAMPLES = [
   "My attendance is 68%, am I eligible for exams?",
@@ -983,7 +1119,10 @@ function renderHome(){
     <div class="home-row">
       <div class="ic" style="background:${st.bg};color:${st.color}">🎉</div>
       <div class="t"><b>${escapeHtml(ev.name)}</b><span>${escapeHtml(ev.date)} · ${escapeHtml(ev.time)} · ${escapeHtml(ev.venue)} · ${escapeHtml(ev.seats)}</span></div>
-      <button class="chip" data-view-event="${escapeHtml(ev.name)}" style="flex:none">View details →</button>
+      <div style="display:flex;gap:6px;flex:none">
+        <button class="chip" data-remind-event="${escapeHtml(ev.name)}">🔔 Remind me</button>
+        <button class="chip" data-view-event="${escapeHtml(ev.name)}">View details →</button>
+      </div>
     </div>`;
   }).join("");
 
@@ -1039,9 +1178,12 @@ function renderOrchestrator(){
           <b>${escapeHtml(r.agent.name)}:</b> ${escapeHtml(r.response)}
         </div>
         ${renderMockCard(r.agent.id, r.query)}
-        <button class="btn btn-primary" style="margin-top:14px" data-view-detail="${r.agent.id}" data-detail-query="${escapeHtml(r.query)}">
-          Open full ${escapeHtml(r.agent.name)} page →
-        </button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+          <button class="btn btn-primary" data-view-detail="${r.agent.id}" data-detail-query="${escapeHtml(r.query)}">
+            Open full ${escapeHtml(r.agent.name)} page →
+          </button>
+          ${(r.agent.id==="calendar"||r.agent.id==="notification"||r.agent.id==="event") ? `<button class="btn btn-ghost" data-remind-agent="${r.agent.id==="event"?"notification":r.agent.id}" data-remind-query="${escapeHtml(r.query)}">🔔 Simulate this reminder now</button>` : ""}
+        </div>
       </div>`;
   } else {
     resultHtml = `<div class="route-result empty">Type a request above, or tap an example, to see it get routed.</div>`;
@@ -1347,7 +1489,8 @@ function buildEventDetailPage(query){
       <div class="related-strip">${related}</div>
     </div>
     <div class="detail-actions">
-      <button class="btn btn-primary" data-tab="orchestrator">Route another request →</button>
+      <button class="btn btn-primary" data-remind-event="${escapeHtml(ev.name)}">🔔 Remind me about this event</button>
+      <button class="btn btn-ghost" data-tab="orchestrator">Route another request →</button>
       <button class="btn btn-ghost" data-tab="agents">View all agents</button>
     </div>`;
 }
@@ -1525,7 +1668,8 @@ function buildGenericDetailPage(agentId, query){
       </div>
     </div>
     <div class="detail-actions">
-      <button class="btn btn-primary" data-tab="orchestrator">Route another request →</button>
+      ${(agentId==="calendar"||agentId==="notification") ? `<button class="btn btn-primary" data-remind-agent="${agentId}" data-remind-query="${escapeHtml(query)}">🔔 Simulate this reminder now</button>` : ""}
+      <button class="btn btn-ghost" data-tab="orchestrator">Route another request →</button>
       <button class="btn btn-ghost" data-tab="agents">View all agents</button>
     </div>`;
 }
@@ -1586,6 +1730,7 @@ const ICON_CLOSE = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 
 function renderNav(){
   const student = DataService.getStudent();
+  const unread = STATE.notifications.filter(n=> !n.seen).length;
   return `
     <header class="nav">
       <div class="nav-inner">
@@ -1593,10 +1738,16 @@ function renderNav(){
           <button class="hamburger" id="sidebar-toggle" aria-label="Open menu">${ICON_MENU}</button>
           <div class="brand"><span class="mark">${LOGO_SVG}</span>Unify Connect</div>
         </div>
-        <button class="nav-user" data-tab="profile" style="background:none;border:none;cursor:pointer;padding:0">
-          <span>${escapeHtml(student.name.split(" ")[0])} · ${escapeHtml(student.branch)}</span>
-          <div class="avatar">${escapeHtml(student.initials)}</div>
-        </button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="notif-wrap">
+            <button class="bell-btn" id="notif-bell-toggle" aria-label="Notifications">🔔${unread>0?`<span class="notif-badge">${unread}</span>`:""}</button>
+            ${STATE.notifPanelOpen ? renderNotifPanel() : ""}
+          </div>
+          <button class="nav-user" data-tab="profile" style="background:none;border:none;cursor:pointer;padding:0">
+            <span>${escapeHtml(student.name.split(" ")[0])} · ${escapeHtml(student.branch)}</span>
+            <div class="avatar">${escapeHtml(student.initials)}</div>
+          </button>
+        </div>
       </div>
     </header>`;
 }
@@ -1768,9 +1919,28 @@ function attachHandlers(){
       STATE.sidebarOpen = false;
       STATE.orchResult = null;
       STATE.orchDetail = null;
+      STATE.notifications = [];
+      STATE.notifPanelOpen = false;
       render();
     });
   }
+
+  // Notification bell + dropdown panel
+  const bellBtn = document.getElementById('notif-bell-toggle');
+  if (bellBtn){ bellBtn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleNotifPanel(); }); }
+  root.querySelectorAll('[data-clear-notif]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); clearNotification(Number(btn.getAttribute('data-clear-notif'))); });
+  });
+  const clearAllBtn = root.querySelector('[data-clear-all-notif]');
+  if (clearAllBtn){ clearAllBtn.addEventListener('click', (e)=>{ e.stopPropagation(); clearAllNotifications(); }); }
+
+  // "Remind me" triggers — event-based and generic (calendar/notification) agent results
+  root.querySelectorAll('[data-remind-event]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); scheduleEventReminder(btn.getAttribute('data-remind-event')); });
+  });
+  root.querySelectorAll('[data-remind-agent]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{ e.stopPropagation(); scheduleGenericReminder(btn.getAttribute('data-remind-agent'), btn.getAttribute('data-remind-query') || ""); });
+  });
 
   root.querySelectorAll('[data-place]').forEach(pin=>{
     const select = ()=>{
@@ -1782,6 +1952,16 @@ function attachHandlers(){
     pin.addEventListener('keydown', (e)=>{ if (e.key === 'Enter') select(); });
   });
 }
+
+/* Close the notification dropdown when clicking anywhere outside it.
+   Bound once at boot — #root gets replaced on every render(), but
+   document itself persists, so this listener survives re-renders. */
+document.addEventListener('click', (e)=>{
+  if (STATE.notifPanelOpen && !e.target.closest('.notif-wrap')){
+    STATE.notifPanelOpen = false;
+    if (STATE.isLoggedIn) render();
+  }
+});
 
 /* ---------------- BOOT ---------------- */
 render();
